@@ -17,8 +17,8 @@ Prerequisites:
 To set up the app execute the following commands.
 
 ```bash
-git clone git@github.com:Anysenseuyen/myuchi-fe.git
-cd tap-link-fe
+git clone git@github.com:nguyenngocbao/Taplink_FE_Menu.git
+cd Taplink_FE_Menu
 touch .env.local
 yarn install
 ```
