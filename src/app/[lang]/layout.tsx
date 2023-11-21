@@ -1,11 +1,21 @@
+import { dir } from 'i18next';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Noto_Sans } from 'next/font/google';
 
 import { WrappedToast } from '@/components/Elements/Toast';
 import { ReduxProvider } from '@/stores/ReduxProvider';
-import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+import './globals.css';
+import { languages } from '../i18n/settings';
+
+const inter = Noto_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700']
+});
+
+export async function generateStaticParams() {
+  return languages.map(lang => ({ lang }));
+}
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,12 +23,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children
+  children,
+  params: { lang }
 }: {
   children: React.ReactNode;
+  params: { lang: string };
 }) {
   return (
-    <html lang="en">
+    <html lang={lang} dir={dir(lang)}>
       <body className={inter.className}>
         <WrappedToast />
         <ReduxProvider>{children}</ReduxProvider>
