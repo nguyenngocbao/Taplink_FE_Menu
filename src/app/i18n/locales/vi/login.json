@@ -1,8 +1,14 @@
 {
   "enterOTPOnTime": "Nhập mật mã đúng giờ",
+  "enterEmail": "Nhập địa chỉ email của bạn",
   "enterOTPDesc": "Hãy xác minh tài khoản của bạn trước khi chúng ta tiếp tục",
   "authen": " Xác thực",
+  "sendOPT": "Gửi OPT",
   "didntReceiveOPT": "Bạn không nhận được mã?",
   "resendOPT": "Gửi lại OTP",
-  "tryAgainAfter": "Thử lại sau"
+  "tryAgainAfter": "Thử lại sau",
+  "loginSuccess": "Đăng nhập thành công",
+  "noAccount": "Bạn chưa có tài khoản",
+  "signUp": "Đăng ký",
+  "invalidOpt": "OTP không đúng. Vui lòng kiểm tra lại"
 }

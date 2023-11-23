@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import CheckListIcon from '@/assets/image/checklist.png';
+import PhoneChat from '@/assets/image/phone-chat.svg';
+
 import { useTranslation } from '../i18n';
 
-import CheckListIcon from './_assets/checklist.png';
-import PhoneChat from './_assets/phone-chat.svg';
 import { ChooseExistedStore } from './_components/ChooseExistedStore';
 
 export const metadata = {
@@ -12,7 +13,8 @@ export const metadata = {
   description: 'Welcome to taplink'
 };
 
-export default async function Home({ params: { lang } }) {
+export default async function Home({ params: { lang }, searchParams }) {
+  const isOpenChoosingStore = !!searchParams?.['open_choosing_store'];
   const { t } = await useTranslation(lang, ['welcome', 'common']);
 
   return (
@@ -50,7 +52,7 @@ export default async function Home({ params: { lang } }) {
               </p>
             </div>
           </Link>
-          <ChooseExistedStore />
+          <ChooseExistedStore isInitialOpen={isOpenChoosingStore} />
         </div>
       </main>
     </>

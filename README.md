@@ -1,6 +1,6 @@
-# Tap Link Front End Project
+# Fpnet Front End Project
 
-[TODO] Description for tap link 
+[TODO] Description for taplink 
 
 ## 🧑‍💻 Get Started
 
@@ -14,21 +14,23 @@ Prerequisites:
 - VSVode
 - Installing [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extentions
 
-To set up the app execute the following commands.
+To set up the app, please execute the following commands.
 
 ```bash
-git clone git@github.com:nguyenngocbao/Taplink_FE_Menu.git
-cd Taplink_FE_Menu
+git clone anysense@anysense.git.backlog.jp:/FPNET-FE/FPNET-FE.git
+cd FPNET-FE
 touch .env.local
 yarn install
 ```
 
-##### `yarn dev`
+The common commands:
+
+`yarn dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-##### `yarn build`
+`yarn build`
 
 Builds the app for production to the `.next` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -36,12 +38,12 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-##### `yarn start`
+`yarn start`
 
 Runs the app in the production mode.\
 Require `yarn build` before
 
-## 📂 Project Structure
+## 🗄 Project Structure
 
 The code in the root folder looks like this:
 
@@ -66,10 +68,9 @@ Most of the code lives in the `src` folder should be common and looks like this:
 
 ```sh
 src
-|
-+-- apis              # shared apis function and api route definition
-|
 +-- app               # app routes defined by Nextjs
+|
++-- assets            # shared assets (images, icons)
 |
 +-- components        # shared, pure components used across the entire application (define component props types into file)
 |
@@ -78,6 +79,8 @@ src
 +-- hooks             # shared hooks used across the entire application
 |
 +-- lib               # re-exporting different libraries preconfigured for the application
+|
++-- services          # API services (Client <-> service <-> Server)
 |
 +-- stores            # global state stores with Redux
 |
@@ -89,11 +92,13 @@ src
 Most of the code lives in the `src/components` folder and looks like this:
 
 ```sh
-components
+components            # all components might be reused
 |
-+-- Elements          # all pure components which is not related to business logic, it can be used anywhere
++-- core              # all pure components which is not related to business logic, it can be used anywhere
 |
-+-- Layouts           # all layout components
++-- layouts           # all layout components
+|
++-- features          # all features components which is related to business logic
 ```
 
 Most of the code lives in the `src/app` folder defined by [app routing convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions). This is our own complementary convention:
@@ -101,12 +106,7 @@ Most of the code lives in the `src/app` folder defined by [app routing conventio
 ```sh
 Note: The following files are optional, related only to the business logic of that route or its children, and should be used by sibling or child routes.
 app
-|
-+-- _icons            # all icon components
-|
 +-- _components       # all components
-|
-+-- apis.tsx          # all apis 
 |
 +-- constants.tsx     # all constants
 |
@@ -115,19 +115,16 @@ app
 +-- utils.tsx         # all utils
 ```
 
-## 🌳 Git branch name convention
+## 📁 Folder and file naming convention
+Components are using `Camel Case`. The others are using `kebab-case`
 
-### Feature: 
+## 🌳 Git branch naming convention
 
-Create a new branch from the `develop` branch, branch name follows this pattern `feature/TaskNo_TaskName`.
+Feature: Create a new branch from the `develop` branch, branch name follows this pattern `feature/TaskNo_TaskName`.
 Ex: `feature/PRO-10_Login`
 
-### Bug: 
-
-Should confirm where should branch checkout from. Branch name follows pattern `fix/TaskNo_TaskName`.
+Bug: Should confirm where should branch checkout from. Branch name follows pattern `fix/TaskNo_TaskName`.
 Ex: `fix/PRO-10_Login`
 
-### Production bug: 
-
-Should confirm where should branch checkout from. Branch name follows patterns `hotfix/TaskNo_TaskName`.
+Production bug: Should confirm where should branch checkout from. Branch name follows patterns `hotfix/TaskNo_TaskName`.
 Ex: `hotfix/PRO-10_Login`

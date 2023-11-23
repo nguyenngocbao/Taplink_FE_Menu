@@ -1,6 +1,8 @@
 import 'next-auth';
 import type { User } from 'next-auth';
 
+import { ROLE } from '.';
+
 declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -8,12 +10,16 @@ declare module 'next-auth' {
   interface Session {
     user: User;
     accessToken?: string;
+    error?: string;
   }
 
   interface User {
-    name: string;
+    id: string;
+    role: ROLE;
+    username: string;
+    fullName: string;
     email: string;
-    email_verified_at: string;
+    phone: string;
   }
 }
 

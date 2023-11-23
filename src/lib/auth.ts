@@ -1,19 +1,18 @@
 import type { NextAuthOptions, User } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
+import { getServerSession as getNextServerSession } from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { AUTH_APIs } from '@/apis/auth';
-import { jwt } from '@/lib/utils';
+import { AUTH_APIs } from '@/services/auth';
+import { decodeJWT } from '@/utils/auth';
 
-import axios from './axios';
+import fetchServer from './fetch-server';
 
 export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: '/login'
-  },
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
-    maxAge: parseInt(process.env.NEXTAUTH_JWT_AGE!) || 1209600
+    maxAge: parseInt(process.env.NEXTAUTH_JWT_AGE) || 1209600
   },
   providers: [
     CredentialsProvider({
@@ -29,39 +28,38 @@ export const authOptions: NextAuthOptions = {
         }
       },
       async authorize(credentials) {
-        try {
-          const data: { user: User; access_token: string } = await axios.post(
-            AUTH_APIs.LOGIN,
-            credentials
-          );
+        const { userInfo, token }: { userInfo: User; token: string } =
+          await fetchServer(AUTH_APIs.VERIFY_OTP, 'POST', {
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password
+            })
+          });
 
-          return { ...data.user, accessToken: data?.access_token };
-        } catch (error) {
-          if (error instanceof Response) {
-            return null;
-          }
-
-          throw new Error('An error has occurred during login request');
-        }
+        return { accessToken: token, ...userInfo };
       }
     })
   ],
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (trigger === 'update') {
-        if (session.type === 'MANUAL') {
-          const user = await axios.get(AUTH_APIs.USER_INFO);
-          return { ...token, ...user };
-        }
+    async jwt({ token, user }) {
+      // if (trigger === 'update') {
+      //   if (session.type === 'MANUAL') {
+      //     const user: any = await fetchServer(
+      //       (session.role as ROLE) === 'member'
+      //         ? AUTH_APIs.MEMBER_INFO
+      //         : AUTH_APIs.ADMIN_INFO
+      //     );
+      //     return { ...token, ...user, role: getUserRole(user) };
+      //   }
 
-        return { ...token, ...session };
-      }
+      //   return { ...token, ...session };
+      // }
 
       if (user) {
-        return { ...token, ...user };
+        return { ...token, ...user, role: user.role };
       }
 
-      const { exp: accessTokenExpires } = jwt.decode(token.accessToken);
+      const { exp: accessTokenExpires } = decodeJWT(token.accessToken);
 
       if (!accessTokenExpires) {
         return token;
@@ -77,42 +75,57 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token.error) {
-        throw new Error('Refresh token has expired');
-      }
-
       session.accessToken = token.accessToken;
       session.user.name = token.name || '';
       session.user.email = token.email || '';
-      session.user.email_verified_at = token.email_verified_at;
+      session.user.id = token?.id;
+
+      session.user.email = token?.email;
+      session.user.email = token?.email;
+      session.user.phone = token?.phone;
+      session.user.role = token.role;
+
+      session.error = token.error as string;
 
       return session;
     }
   },
   events: {
     async signOut() {
-      await axios.get(AUTH_APIs.LOGOUT);
+      await fetchServer(AUTH_APIs.LOGOUT, 'POST');
     }
   }
 };
 
 async function refreshAccessToken(token: JWT) {
-  try {
-    const refreshedAccessToken: { access_token: string } = await axios.post(
-      AUTH_APIs.REFRESH
-    );
+  // try {
+  //   const refreshedAccessToken: { access_token: string } = await fetchServer(
+  //     AUTH_APIs.REFRESH
+  //   );
 
-    const { exp } = jwt.decode(refreshedAccessToken.access_token);
+  //   const { exp } = jwt.decode(refreshedAccessToken.access_token);
 
-    return {
-      ...token,
-      accessToken: refreshedAccessToken.access_token,
-      exp
-    };
-  } catch (error) {
-    return {
-      ...token,
-      error: 'RefreshAccessTokenError'
-    };
-  }
+  //   return {
+  //     ...token,
+  //     accessToken: refreshedAccessToken.access_token,
+  //     exp
+  //   };
+  // } catch (error) {
+  return {
+    ...token,
+    error: 'RefreshAccessTokenError'
+  };
+  // }
+}
+
+export async function getCurrentUser() {
+  const session = await getNextServerSession(authOptions);
+
+  return session?.user;
+}
+
+export async function getServerSession() {
+  const session = await getNextServerSession(authOptions);
+
+  return session;
 }

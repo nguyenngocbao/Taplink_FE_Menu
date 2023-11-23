@@ -1,0 +1,12 @@
+{
+  "username": "Username",
+  "usernamePlaceholder": "Enter username",
+  "fullName": "Full name",
+  "fullNamePlaceholder": "Enter full name",
+  "phone": "Phone Number",
+  "phonePlaceholder": "Enter phone number",
+  "email": "Email Address",
+  "emailPlaceholder": "Enter email address",
+  "signUp": "Sign Up",
+  "successMessage": "Create account successfully"
+}

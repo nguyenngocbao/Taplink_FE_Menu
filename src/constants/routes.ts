@@ -1,10 +1,15 @@
-export const COMMON_ROUTE = {
-  WELCOME: '/',
-  LOGIN: `/login`,
+export const COMMON_ROUTE = {};
+
+export const STORE_OWNER_ROUTE = {
+  ...COMMON_ROUTE,
+  LOGIN: '/login',
+  MYPAGE: '/',
   CREATE_STORE: '/store/create',
-  STORE: '/store'
+  STORE: '/store',
+  SIGN_UP: '/sign-up'
 };
 
-export const USER_ROUTE = {
-  MYPAGE: `/mypage`
+export const ADMIN_ROUTE = {
+  ...COMMON_ROUTE,
+  INDEX: ''
 };

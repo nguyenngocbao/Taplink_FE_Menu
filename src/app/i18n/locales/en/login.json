@@ -1,8 +1,14 @@
 {
   "enterOTPOnTime": "Enter OTP on time",
+  "enterEmail": "Enter your email address",
   "enterOTPDesc": "Please verify your account before we proceed",
   "authen": "Authenticate",
+  "sendOPT": "Send OPT",
   "didntReceiveOPT": "Didn't receive the OTP?",
   "resendOPT": "Resend OTP",
-  "tryAgainAfter": "Try again after"
+  "tryAgainAfter": "Try again after",
+  "loginSuccess": "Login successfully",
+  "noAccount": "You don't have an account",
+  "signUp": "Sign up",
+  "invalidOpt": "Incorrect OPT. Please check again!"
 }

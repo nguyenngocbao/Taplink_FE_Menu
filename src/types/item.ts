@@ -1,3 +1,15 @@
+import { ID } from './CRUD';
+
+export type ItemResponse = {
+  id: ID;
+  name: string;
+  description: string;
+  sortOrder: number;
+  priceTypeId: number;
+  categoryId: number;
+  priceInfo: string;
+};
+
 export type ItemRequest = {
   id?: string;
   image: string;
@@ -6,5 +18,3 @@ export type ItemRequest = {
   priceType: string;
   prices: string[];
 };
-
-export type ItemReponse = ItemRequest;

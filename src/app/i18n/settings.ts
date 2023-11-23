@@ -1,14 +1,16 @@
+import VietnameseFlagImage from '@/assets/image/vietnamese-flag.png';
+
 export const fallbackLng = 'en';
 export const languageInfo = [
   {
     id: fallbackLng,
     name: 'English',
-    iconUrl: '/vietnamese-flag.png'
+    iconUrl: VietnameseFlagImage
   },
   {
     id: 'vi',
     name: 'Việt Nam',
-    iconUrl: '/vietnamese-flag.png'
+    iconUrl: VietnameseFlagImage
   }
 ];
 export const languages = languageInfo.map(lang => lang.id);

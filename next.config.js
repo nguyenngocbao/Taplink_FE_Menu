@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
-    domains: ['example.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'loremflickr.com'
+      }
+    ]
+  },
+  env: {
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET
   }
 };
 

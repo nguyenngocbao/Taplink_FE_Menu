@@ -4,7 +4,8 @@
     "cancel": "Cancel",
     "crop": "Crop",
     "next": "Next",
-    "loading": "Loading"
+    "loading": "Loading",
+    "emailPlaceholder": "Enter email address"
   },
   "message": {
     "fieldRequired": "Field is required",

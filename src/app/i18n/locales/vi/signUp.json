@@ -1,0 +1,12 @@
+{
+  "username": "Username",
+  "usernamePlaceholder": "Nhập username",
+  "fullName": "Tên đầy đủ",
+  "fullNamePlaceholder": "Nhập tên đầy đủ",
+  "phone": "Số điện thoại",
+  "phonePlaceholder": "Nhập số điện thoại",
+  "email": "Địa chỉ email",
+  "emailPlaceholder": "Nhập địa chỉ email",
+  "signUp": "Đăng Ký",
+  "successMessage": "Tạo tài khoản thành công!"
+}

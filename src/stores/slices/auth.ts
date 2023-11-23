@@ -1,11 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { User } from '@/types/auth';
-
 import { RootState } from '../index';
 
 interface AuthStore {
-  user: User;
+  user: null;
 }
 
 const initialState: AuthStore = {

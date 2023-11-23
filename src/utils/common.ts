@@ -1,9 +1,14 @@
+import querystring from 'querystring';
+
+import { Method } from 'axios';
 import clsx, { ClassValue } from 'clsx';
 import { toast } from 'react-toastify';
 import { twMerge } from 'tailwind-merge';
 
 import { ERROR_MESSAGE_ID } from '@/constants';
-import { ServerError } from '@/types';
+import axios from '@/lib/axios';
+import fetchServer from '@/lib/fetch-server';
+import { ServerError, SortOrder } from '@/types';
 
 export const mergeClasses = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -12,7 +17,7 @@ export const mergeClasses = (...inputs: ClassValue[]) => {
 export const handleServerError = (e: ServerError) => {
   if (e.isResolved) {
     toast.error(e.message);
-    return;
+    throw e;
   }
   throw e;
 };
@@ -90,6 +95,18 @@ export const mergeQueryParams = (params: Record<string, any>) => {
   );
 };
 
+export const updateUrlWithParams = (params: Record<string, any>) => {
+  const trimedParams = Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value)
+  );
+  const newUrl = mergeQueryParams(trimedParams);
+  window.history.replaceState(
+    { ...window.history.state, as: newUrl, url: newUrl },
+    document.title,
+    newUrl
+  );
+};
+
 function generateUUID() {
   // Public Domain/MIT
   let d = new Date().getTime(); //Timestamp
@@ -139,3 +156,170 @@ export const scrollToErrorMessage = (delay = 100) => {
     delay
   );
 };
+
+export const formatDateTimeJp = (d?: any) => {
+  const date = d ? new Date(d) : new Date();
+
+  const _year = date.getFullYear();
+  const _month = `0${date.getMonth() + 1}`.slice(-2);
+  const _date = `0${date.getDate()}`.slice(-2);
+
+  return `${_year}年${_month}月${_date}日`;
+};
+
+export const getMockError = obj => {
+  const res = Object.entries(obj).map(([key, value]) => [
+    key,
+    typeof value === 'object' && !(value instanceof Date)
+      ? getMockError(value)
+      : ['Error validation message']
+  ]);
+  return Object.fromEntries(res);
+};
+
+export async function callApi<R>(
+  href: string,
+  method: Method,
+  body?: any,
+  isMock?: boolean,
+  headers?: Record<string, string>
+): Promise<R> {
+  switch (method) {
+    case 'GET':
+    case 'get':
+    case 'DELETE':
+    case 'delete':
+      if (isOnServer()) {
+        return fetchServer(href, method, {
+          tags: [href],
+          isMock: isMock,
+          body: body
+        });
+      }
+
+      return await axios[method.toLowerCase()](href, {
+        params: body,
+        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined
+      });
+    case 'POST':
+    case 'post':
+    case 'PUT':
+    case 'put':
+      if (isOnServer()) {
+        return fetchServer(href, method, {
+          tags: [href],
+          isMock: isMock,
+          body: body
+        });
+      }
+
+      return await axios[method.toLowerCase()](href, body, {
+        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
+        headers: headers
+      });
+
+    default:
+      console.error('Method does not support');
+  }
+}
+
+/**
+ *
+ * @param number start from 0
+ * @returns
+ */
+export const getLastDateInMonth = (number: number) => {
+  const now = new Date();
+  const d = new Date(now.getFullYear(), number + 1, 0);
+  return d.getDate();
+};
+
+/**
+ *
+ * @param month start from 0
+ * @returns
+ */
+export const getDatesOfMonth = (month: number) => {
+  return getArrayOfNumber(1, getLastDateInMonth(month));
+};
+
+export const getStandardFormatDate = (d: any) => {
+  const date = d ? new Date(d) : new Date();
+
+  const _year = date.getFullYear();
+  const _month = `0${date.getMonth() + 1}`.slice(-2);
+  const _date = `0${date.getDate()}`.slice(-2);
+
+  return `${_year}-${_month}-${_date}`;
+};
+
+export const delay = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+export const sortArrByKey = (
+  arr: Array<any>,
+  sortKey: string,
+  order: SortOrder
+) => {
+  return arr.sort((a, b) => {
+    const aValue = a[sortKey];
+    const bValue = b[sortKey];
+
+    if (order === 'asc') {
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    } else {
+      return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
+    }
+  });
+};
+
+export function queryStringToObject(searchString: string) {
+  const result: Record<string, any> = {};
+
+  Object.entries(querystring.parse(searchString)).forEach(([key, value]) => {
+    const match = key.match(/^([^&.]+)\[(.+)\]$/);
+    if (match) {
+      const [, objKey, fieldName] = match;
+      if (result[objKey]) {
+        result[objKey][fieldName] = value;
+      } else {
+        result[objKey] = {
+          [fieldName]: value
+        };
+      }
+    } else {
+      result[key] = value;
+    }
+  });
+
+  return result;
+}
+
+export const getQueryParam = key => {
+  if (isOnServer()) {
+    return undefined;
+  }
+  const query = new URLSearchParams(location.search);
+  return query.get(key);
+};
+
+export function blobToBase64(blob): Promise<string> {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+}
+
+export function dataURLtoFile(dataurl, filename) {
+  const arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[arr.length - 1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}

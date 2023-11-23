@@ -1,43 +1,63 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
-import { STORE_APIS } from '@/apis/store';
-import MarkerIcon from '@/app/[lang]/_assets/marker.png';
 import { useTranslation } from '@/app/i18n/client';
-import { Button, Dialog, InputField } from '@/components/Elements';
-import { useDataApi } from '@/hooks/useDataAPI';
-import { useDisclosure } from '@/hooks/useDisclosure';
-import { StoreResponse } from '@/types/store';
+import MarkerIcon from '@/assets/image/marker.png';
+import { Button, Dialog, InputField } from '@/components/core';
+import { STORE_OWNER_ROUTE } from '@/constants/routes';
+import { useDataApi, useDisclosure } from '@/hooks';
+import { storeService } from '@/services/store';
+import { Store } from '@/types/store';
+import { mergeQueryParams } from '@/utils/common';
 
 import { SearchIcon } from './SearchIcon';
 import { StoreItem, StoreItemSkeleton } from './StoreItem';
 
-export const ChooseExistedStore = () => {
+export const ChooseExistedStore = ({ isInitialOpen }) => {
   const { t } = useTranslation(['welcome', 'common']);
-  const { isOpen, open, close } = useDisclosure();
+  const { isOpen, open, close } = useDisclosure(isInitialOpen);
   const [keyword, setKeyword] = useState('');
   const [selectedStoreId, setSelectedStoreId] = useState(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const getStoreApi = useDataApi<StoreResponse[]>(STORE_APIS.GET);
+  const getStore = useDataApi<Store[]>(storeService.list.bind(storeService));
 
   const onSearchByKeyword = () => {
     console.log(keyword);
-    getStoreApi.get();
     setSelectedStoreId(null);
   };
 
-  useEffect(() => {
-    getStoreApi.get();
-  }, []);
+  const onOpen = () => {
+    const newUrl = mergeQueryParams({ option: 'open_choosing_store' });
+    window.history.replaceState(
+      { ...window.history.state, as: newUrl, url: newUrl },
+      document.title,
+      newUrl
+    );
 
-  console.log(getStoreApi.data);
+    if (status === 'loading') {
+      toast.info('Please try again');
+    }
+
+    if (session) {
+      open();
+    } else {
+      router.push(
+        `${STORE_OWNER_ROUTE.LOGIN}?callbackUrl=${location.pathname}${location.search}`
+      );
+    }
+  };
 
   return (
     <>
       <button
-        onClick={open}
+        onClick={onOpen}
         className="flex w-full items-center justify-start gap-[17px] rounded-[10px] bg-primary-bg px-[20px] py-[17px] text-left"
       >
         <Image
@@ -64,10 +84,10 @@ export const ChooseExistedStore = () => {
           />
         </div>
         <div className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
-          {getStoreApi.loading ? (
+          {getStore.isLoading ? (
             <StoreItemSkeleton length={4} />
           ) : (
-            getStoreApi.data?.map(store => (
+            (getStore.data ?? [])?.map(store => (
               <StoreItem
                 data={store}
                 key={store.id}

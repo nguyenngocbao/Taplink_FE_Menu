@@ -1,4 +1,4 @@
-import { Option } from '.';
+import { ID } from './CRUD';
 
 export type StoreAddress = {
   nation: string;
@@ -8,17 +8,30 @@ export type StoreAddress = {
   detail: string;
 };
 
-export type StoreRequest = {
-  id: string;
+export type Store = {
+  id?: ID;
   name: string;
-  type?: string;
-  phoneNumber: string;
-  email?: string;
+  storeTypeId: number | string;
   image: string;
-  address: StoreAddress;
+  address: string;
+  wardId: number | string;
+  cityId: number | string;
+  districtId: number | string;
+  wifiPass: string;
+  storeTemplateId: number;
+  menuTemplateId: number;
 };
 
-export type StoreResponse = StoreRequest;
+export type StoreResponse = {
+  id: ID;
+  name: string;
+  wifiPass: string;
+  storeTemplateId: number;
+  menuTemplateId: number;
+  address: string;
+  wardId: number;
+  storeTypeId: number;
+};
 
 export type StoreCategoryResponse = {
   id?: string;
@@ -29,4 +42,8 @@ export type StoreCategoryResponse = {
 
 export type StoreCategoryResquest = StoreCategoryResponse;
 
-export type StoreType = Option;
+export type StoreTypeResponse = {
+  id: number;
+  code: string;
+  name: string;
+};

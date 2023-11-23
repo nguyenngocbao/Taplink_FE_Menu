@@ -2,8 +2,10 @@ import { dir } from 'i18next';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
-import { WrappedToast } from '@/components/Elements/Toast';
-import { Header } from '@/components/Layouts/Header';
+import { WrappedToast } from '@/components/core/Toast';
+import { AuthProvider } from '@/components/features/login/AuthProvider';
+import { Header } from '@/components/layoutsq/Header';
+import { ProgressBar } from '@/components/layoutsq/ProgressBar';
 import { ReduxProvider } from '@/stores/ReduxProvider';
 
 import './globals.css';
@@ -12,32 +14,32 @@ import { languages } from '../i18n/settings';
 const inter = localFont({
   src: [
     {
-      path: './_assets/fonts/SVN-Gilroy Light.woff',
+      path: '../../assets/fonts/SVN-Gilroy Light.woff',
       weight: '300',
       style: 'normal'
     },
     {
-      path: './_assets/fonts/SVN-Gilroy Regular.woff',
+      path: '../../assets/fonts/SVN-Gilroy Regular.woff',
       weight: '400',
       style: 'normal'
     },
     {
-      path: './_assets/fonts/SVN-Gilroy Medium.woff',
+      path: '../../assets/fonts/SVN-Gilroy Medium.woff',
       weight: '500',
       style: 'normal'
     },
     {
-      path: './_assets/fonts/SVN-Gilroy SemiBold.woff',
+      path: '../../assets/fonts/SVN-Gilroy SemiBold.woff',
       weight: '600',
       style: 'normal'
     },
     {
-      path: './_assets/fonts/SVN-Gilroy Bold.woff',
+      path: '../../assets/fonts/SVN-Gilroy Bold.woff',
       weight: '700',
       style: 'normal'
     },
     {
-      path: './_assets/fonts/SVN-Gilroy Heavy.woff',
+      path: '../../assets/fonts/SVN-Gilroy Heavy.woff',
       weight: '800',
       style: 'normal'
     }
@@ -61,13 +63,16 @@ export default function RootLayout({
   params: { lang: string };
 }) {
   return (
-    <html lang={lang} dir={dir(lang)}>
-      <body className={inter.className}>
+    <html suppressHydrationWarning lang={lang} dir={dir(lang)}>
+      <body suppressHydrationWarning className={inter.className}>
+        <ProgressBar />
         <WrappedToast />
-        <ReduxProvider>
-          <Header />
-          {children}
-        </ReduxProvider>
+        <AuthProvider>
+          <ReduxProvider>
+            <Header />
+            {children}
+          </ReduxProvider>
+        </AuthProvider>
       </body>
     </html>
   );

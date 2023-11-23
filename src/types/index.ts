@@ -6,6 +6,11 @@ export type ServerError = {
   isResolved?: boolean;
 };
 
+export type ServerValidationError<T> = {
+  code: number;
+  messages: Record<keyof T, any>;
+};
+
 export type ServerData<T> = {
   data: T;
   message: string;
@@ -29,39 +34,36 @@ export type PaginationReq<T> = {
 
 export type PaginationMeta = Partial<{
   current_page: number;
-  from: number;
-  last_page: number;
-  links: [
-    {
-      url: null;
-      label: string;
-      active: false;
-    }
-  ];
-  path: string;
-  per_page: number;
-  to: number;
+  prev_page: number;
+  next_page: number;
+  max_page: number;
   total: number;
 }>;
 
-export type PaginationRes<T> = Partial<{
-  links: {
-    first: string;
-    last: string;
-    prev: null;
-    next: string;
-  };
-  meta: PaginationMeta;
-}> &
-  T;
+export type PaginationRes<T> = {
+  data: T[];
+  pagination: PaginationMeta;
+};
 
 export type SIZE = 'lg' | 'md' | 'sm';
 
 export interface Option {
-  value: number | string;
+  value: number | string | boolean;
   label: string;
 }
 
 export interface SkeletonProps {
   length?: number;
+}
+
+export type ROLE = 'admin' | 'store_owner' | 'unknown';
+
+export type ComponentSet = {
+  Default: (props: any) => Promise<JSX.Element>;
+  Skeleton: any;
+};
+
+export interface PaginationSearchParams<Res = unknown> {
+  page?: number;
+  sort?: Partial<Record<keyof Res, SortOrder>>;
 }
