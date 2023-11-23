@@ -62,7 +62,7 @@ const _Form = <
 
   return (
     <form
-      className={mergeClasses('space-y-5', className)}
+      className={mergeClasses('space-y-[36px]', className)}
       onSubmit={methods.handleSubmit(onSubmit)}
       id={id}
     >

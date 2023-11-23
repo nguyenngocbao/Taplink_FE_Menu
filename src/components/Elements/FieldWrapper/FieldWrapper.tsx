@@ -43,7 +43,7 @@ export const FieldWrapper = React.memo((props: FieldWrapperProps) => {
   return (
     <div className={className}>
       <CustomTag
-        className="relative block text-[14px] leading-[18px] text-gray-700"
+        className="relative block text-[16px]/[22.4px] font-[600] text-gray-700"
         htmlFor={htmlFor}
       >
         <div
@@ -57,8 +57,8 @@ export const FieldWrapper = React.memo((props: FieldWrapperProps) => {
             <div className="flex items-center gap-[8px]">
               <span className={labelClassName}>{label}</span>
               {isRequired && (
-                <span className="bg-baby-pink text-red h-[18px] w-[40px] rounded-[4px] text-center text-[12px]">
-                  必須
+                <span className="bg-baby-pink h-[18px] shrink-0 rounded-[4px] bg-warning px-1 text-center text-[12px] text-white">
+                  Required
                 </span>
               )}
               {tooltip && (
@@ -71,6 +71,7 @@ export const FieldWrapper = React.memo((props: FieldWrapperProps) => {
             </div>
           )}
 
+          <div className="relative flex-1">{children}</div>
           {error?.message &&
             (Array.isArray(error.message) ? (
               <>
@@ -80,7 +81,7 @@ export const FieldWrapper = React.memo((props: FieldWrapperProps) => {
                     role="alert"
                     id={ERROR_MESSAGE_ID}
                     aria-label={m}
-                    className="text-red text-[12px] leading-[18px]"
+                    className="text-[12px] leading-[18px] text-warning"
                   >
                     {m}
                   </div>
@@ -91,12 +92,11 @@ export const FieldWrapper = React.memo((props: FieldWrapperProps) => {
                 role="alert"
                 id={ERROR_MESSAGE_ID}
                 aria-label={error.message}
-                className="text-red text-[12px] leading-[18px]"
+                className="text-[12px] leading-[18px] text-warning"
               >
                 {error.message}
               </div>
             ))}
-          <div className="relative flex-1">{children}</div>
         </div>
       </CustomTag>
     </div>

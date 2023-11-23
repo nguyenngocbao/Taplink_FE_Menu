@@ -1,3 +1,5 @@
+'use client';
+
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import React, { FC, memo, useState } from 'react';
 import { FieldError, UseFormRegisterReturn } from 'react-hook-form';

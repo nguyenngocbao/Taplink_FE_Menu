@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import {
   DetailedHTMLProps,
@@ -109,9 +111,10 @@ export const InputField: FC<InputFieldProps> = memo(
           disabled={disabled}
           onInput={_onInput}
           className={mergeClasses(
-            'border-silver-sand text-black-700 disabled:bg-black-200 relative block h-[40px] w-full appearance-none  rounded-[4px] border bg-white py-3 text-[14px] leading-[20px] placeholder-gray-400',
-            error ? '!border-red-cc1 bg-pink-f5d' : '',
+            'relative block h-[40px] w-full appearance-none rounded-[10px] border-[0.5px]  border-disabled bg-white  py-3 text-[16px]/[22.4px] font-normal placeholder-gray-400 disabled:bg-disabled',
+            error ? '!border-warning bg-warning/10' : '',
             prefixIcon ? 'px-[56px]' : 'px-[12px]',
+            sufixIcon ? 'pr-[56px]' : 'px-[12px]',
             className
           )}
           ref={inputRef}
@@ -121,7 +124,7 @@ export const InputField: FC<InputFieldProps> = memo(
         {sufixIcon && (
           <>
             <button
-              className="absolute right-0 top-[50%] flex h-[45px] w-[60px] translate-y-[-50%] items-center justify-center"
+              className="absolute right-0 top-[50%] flex h-full w-[60px] translate-y-[-50%] items-center justify-center rounded-[10px]"
               type="button"
               onClick={onClickSufixIcon}
             >

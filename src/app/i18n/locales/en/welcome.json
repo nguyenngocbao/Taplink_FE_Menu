@@ -1,8 +1,9 @@
 {
   "welcomeTo": "Welcome to",
   "title": "Taplink",
-  "createNewShop": "Create New Shop",
-  "createNewShopDesc": "Set up store information, create a new menu",
-  "hasExistedShop": "Existing Shop",
-  "hasExistedShopDesc": "Select the shop you already own"
+  "createNewStore": "Create New Store",
+  "createNewStoreDesc": "Set up store information, create a new menu",
+  "hasExistedStore": "Existing Store",
+  "hasExistedStoreDesc": "Select the store you already own",
+  "chooseYourStore": "Choose your store"
 }

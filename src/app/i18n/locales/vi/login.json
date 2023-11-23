@@ -1,0 +1,8 @@
+{
+  "enterOTPOnTime": "Nhập mật mã đúng giờ",
+  "enterOTPDesc": "Hãy xác minh tài khoản của bạn trước khi chúng ta tiếp tục",
+  "authen": " Xác thực",
+  "didntReceiveOPT": "Bạn không nhận được mã?",
+  "resendOPT": "Gửi lại OTP",
+  "tryAgainAfter": "Thử lại sau"
+}

@@ -3,6 +3,7 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import {
@@ -32,7 +33,9 @@ i18next
     preload: runsOnServerSide ? languages : []
   });
 
-export function useTranslation(lng: string, ns: string, options = {}) {
+export function useTranslation(ns: string | string[], options = {}) {
+  const params = useParams();
+  const lng = String(params.lang);
   const [cookies, setCookie] = useCookies([cookieName]);
   const ret = useTranslationOrg(ns, options);
   const { i18n } = ret;

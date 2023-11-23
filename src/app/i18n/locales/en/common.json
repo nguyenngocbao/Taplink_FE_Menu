@@ -1,4 +1,14 @@
 {
-  "title": "Hi there!",
-  "to-second-page": "To second page"
+  "label": {
+    "uploadImage": "Upload image",
+    "cancel": "Cancel",
+    "crop": "Crop",
+    "next": "Next",
+    "loading": "Loading"
+  },
+  "message": {
+    "fieldRequired": "Field is required",
+    "emailInvalid": "Email is invalid",
+    "uploadImageOversize": "File size should not exceed 5MB"
+  }
 }

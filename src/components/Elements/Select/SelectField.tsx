@@ -70,10 +70,10 @@ export const SelectField = (props: SelectFieldProps) => {
                 name="location"
                 style={{ ...(readOnly && { opacity: 1 }) }}
                 className={mergeClasses(
-                  'border-silver-sand text-black-700 block h-full w-full appearance-none rounded-[4px] border bg-white py-2 pl-3 pr-[40px] text-[14px] leading-[20px]',
-                  label && 'mt-1',
+                  'block h-full w-full appearance-none rounded-[10px] border-[0.5px] border-disabled bg-white py-2 pl-3 pr-[40px] text-[16px]/[22.4px]',
                   className,
-                  disabled && 'disabled:bg-black-200'
+                  error ? '!border-warning bg-warning/10' : '',
+                  disabled && 'disabled:bg-disabled'
                 )}
                 defaultValue={defaultValue}
                 onChange={e => onChange && onChange(e.target.value)}

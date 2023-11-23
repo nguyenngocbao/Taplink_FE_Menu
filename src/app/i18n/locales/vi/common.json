@@ -1,4 +1,14 @@
 {
-  "title": "Chào!",
-  "to-second-page": "Tới page 2"
+  "label": {
+    "uploadImage": "Upload hình ảnh",
+    "cancel": "Hủy bỏ",
+    "crop": "Cắt",
+    "next": "Tiếp tục",
+    "loading": "Đang tải"
+  },
+  "message": {
+    "fieldRequired": "Trường bắt buộc",
+    "emailInvalid": "Email không hợp lệ",
+    "uploadImageOversize": "Kích thước file không được vượt quá 5MB"
+  }
 }

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Noto_Sans } from 'next/font/google';
 
 import { WrappedToast } from '@/components/Elements/Toast';
+import { Header } from '@/components/Layouts/Header';
 import { ReduxProvider } from '@/stores/ReduxProvider';
 
 import './globals.css';
@@ -33,7 +34,10 @@ export default function RootLayout({
     <html lang={lang} dir={dir(lang)}>
       <body className={inter.className}>
         <WrappedToast />
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <Header />
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   );

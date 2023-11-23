@@ -1,4 +1,4 @@
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import { useTranslation } from '@/app/i18n/client';
@@ -12,8 +12,7 @@ type useLanguagesReturnedData = {
 };
 
 export default function useLanguages(): useLanguagesReturnedData {
-  const { lang } = useParams();
-  const { i18n } = useTranslation(String(lang), 'common');
+  const { i18n } = useTranslation('common');
 
   const selectedLanguage =
     languageInfo.find(l => l.id === i18n.language) || null;
@@ -26,7 +25,8 @@ export default function useLanguages(): useLanguagesReturnedData {
       if (lang === selectedLanguage.id) return;
 
       axios.defaults.headers['Accept-Language'] = lang;
-      router.push(
+      i18n.changeLanguage(lang);
+      router.replace(
         window.location.href.replace(`/${selectedLanguage.id}`, `/${lang}`)
       );
     },

@@ -17,4 +17,9 @@
 }
 
 body {
+  @apply text-black;
+}
+
+p {
+  @apply text-[16px]/[22.4px] font-[600];
 }

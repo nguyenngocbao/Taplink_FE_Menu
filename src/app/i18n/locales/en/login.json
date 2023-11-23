@@ -1,0 +1,8 @@
+{
+  "enterOTPOnTime": "Enter OTP on time",
+  "enterOTPDesc": "Please verify your account before we proceed",
+  "authen": "Authenticate",
+  "didntReceiveOPT": "Didn't receive the OTP?",
+  "resendOPT": "Resend OTP",
+  "tryAgainAfter": "Try again after"
+}
