@@ -52,6 +52,7 @@ export const LoginAction = () => {
           renderInput={props => (
             <input
               {...props}
+              type="number"
               className="h-[48px] !w-[48px] rounded-[4px] border-[0.5px] border-disabled text-[20px]/[24px] font-bold"
             />
           )}

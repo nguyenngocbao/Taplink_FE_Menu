@@ -6,8 +6,8 @@ import PencilWhite from '@/app/[lang]/_assets/pencil-white.svg';
 import PhoneBlack from '@/app/[lang]/_assets/phone-black.svg';
 import { useTranslation } from '@/app/i18n';
 
-import { CafeLayout } from './_components/CafeLayout';
 import { CategoryCreation } from './_components/CategoryCreation';
+import { BasicLayout } from './_components/layouts/Basic';
 
 export default async function ({ params: { lang } }) {
   const { t } = await useTranslation(lang, 'myPage');
@@ -22,7 +22,7 @@ export default async function ({ params: { lang } }) {
         />
       </div>
       <div className="absolute left-0 top-0 z-[-1] h-[139px] w-screen rounded-b-[10px] bg-primary/80"></div>
-      <div>
+      <>
         <div className="mb-[16px] flex items-center justify-between">
           <p className="text-white">{t('shopInfo')}</p>
           <button>
@@ -56,16 +56,16 @@ export default async function ({ params: { lang } }) {
             </p>
           </div>
         </div>
-        <div>
-          <div className="mb-[12px] flex items-center justify-between">
-            <span className="text-[20px]/[24px] font-bold text-[#000]">
-              {t('category')}
-            </span>
-            <CategoryCreation />
-          </div>
-          <CafeLayout />
+
+        <div className="mb-[12px] flex items-center justify-between">
+          <span className="text-[20px]/[24px] font-bold text-[#000]">
+            {t('category')}
+          </span>
+          <CategoryCreation />
         </div>
-      </div>
+        <BasicLayout />
+        {/* <GroupLayout /> */}
+      </>
     </main>
   );
 }

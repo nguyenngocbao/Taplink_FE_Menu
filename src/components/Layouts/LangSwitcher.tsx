@@ -10,7 +10,10 @@ export const LangSwicher = () => {
   const { languages, selectedLanguage, onChangeLanguage } = useLanguages();
 
   return (
-    <Menu as="div" className="absolute right-0 inline-block h-[56px] w-[56px]">
+    <Menu
+      as="div"
+      className="absolute right-0 z-50 inline-block h-[56px] w-[56px]"
+    >
       <Menu.Button className="flex h-full w-full items-center justify-center">
         <Image
           src={selectedLanguage.iconUrl}

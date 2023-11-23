@@ -171,7 +171,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
                 '/images/default-avatar.svg')
             }
             className={mergeClasses(
-              'h-full w-full bg-white object-contain',
+              'h-full w-full bg-white object-contain object-top',
               className
             )}
           />

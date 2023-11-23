@@ -5,19 +5,19 @@ import { FC, Fragment, HTMLAttributes } from 'react';
 import { ItemReponse } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
-import Drink1 from '../../../_assets/drink1.png';
-import SquarePencilPrimary from '../../../_assets/square-pencil-primary.svg';
-import ThreeDot from '../../../_assets/three-dot.svg';
-import TrashWarning from '../../../_assets/trash-warning.svg';
+import Spa from '../../_assets/spa.png';
+import SquarePencilPrimary from '../../_assets/square-pencil-primary.svg';
+import ThreeDot from '../../_assets/three-dot.svg';
+import TrashWarning from '../../_assets/trash-warning.svg';
 
-interface DrinkWithImageCard extends HTMLAttributes<HTMLElement> {
+interface GroupImageCard extends HTMLAttributes<HTMLElement> {
   t: any;
   data?: ItemReponse;
   onEdit?: () => void;
   onRemove?: () => void;
 }
 
-export const DrinkWithImageCard: FC<DrinkWithImageCard> = ({
+export const GroupImageCard: FC<GroupImageCard> = ({
   t,
   data,
   className,
@@ -29,19 +29,17 @@ export const DrinkWithImageCard: FC<DrinkWithImageCard> = ({
   return (
     <article
       className={mergeClasses(
-        'relative flex flex-col gap-[29px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
+        'relative flex flex-col gap-[12px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
         className
       )}
       {...props}
     >
-      <div className="relative h-[142px] w-full rounded-[10px] bg-primary-bg2">
-        <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
-          {t('new')}
-        </div>
+      <div className="relative h-[195px] w-full rounded-[10px]">
         <Image
-          src={Drink1}
+          src={Spa}
           alt=""
-          className="absolute left-[50%] top-[24px] h-[147px] w-auto max-w-full translate-x-[-50%]"
+          className="rounded-[10px] object-cover object-top"
+          fill
         />
         <Menu
           as="div"
@@ -93,32 +91,13 @@ export const DrinkWithImageCard: FC<DrinkWithImageCard> = ({
         </Menu>
       </div>
 
-      <div>
+      <div className="px-[8px] text-left">
         <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-          Trà long nhãn
+          Chăm sóc da
         </p>
         <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
-          Lorem Ipsum is simply dummy text
+          Lorem Ipsum is simply dummy text of the printing
         </p>
-        <span className="flex items-center justify-center gap-[13px]">
-          <span className="text-[20px]/[24px] font-bold">25.000đ</span>
-          <span className="flex items-center gap-[2px] text-[14px]/[19.6px] font-normal">
-            <svg
-              width="12"
-              height="13"
-              viewBox="0 0 12 13"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.09749 1.39137C5.45972 0.632244 6.54028 0.632245 6.90252 1.39137L7.92637 3.53703C8.07215 3.84254 8.3626 4.05355 8.6982 4.09779L11.0552 4.40849C11.8891 4.51842 12.2231 5.54609 11.613 6.12518L9.88876 7.76197C9.64326 7.99503 9.53232 8.33646 9.59395 8.66931L10.0268 11.007C10.18 11.8341 9.30578 12.4692 8.56652 12.068L6.47701 10.9339C6.1795 10.7724 5.8205 10.7724 5.52298 10.9339L3.43348 12.068C2.69422 12.4692 1.82003 11.8341 1.97318 11.007L2.40605 8.66931C2.46768 8.33646 2.35674 7.99503 2.11124 7.76197L0.386979 6.12518C-0.223052 5.54609 0.110861 4.51842 0.944765 4.40849L3.3018 4.09779C3.63741 4.05355 3.92785 3.84254 4.07363 3.53703L5.09749 1.39137Z"
-                fill="#171717"
-              />
-            </svg>
-
-            <span>5.0</span>
-          </span>
-        </span>
       </div>
     </article>
   );

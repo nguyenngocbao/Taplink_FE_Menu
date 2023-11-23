@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslation } from '../i18n';
 
 import CheckListIcon from './_assets/checklist.png';
+import PhoneChat from './_assets/phone-chat.svg';
 import { ChooseExistedStore } from './_components/ChooseExistedStore';
 
 export default async function Home({ params: { lang } }) {
@@ -13,9 +14,9 @@ export default async function Home({ params: { lang } }) {
     <>
       <main className="flex flex-col items-center px-[16px] py-[19px]">
         <Image
-          src=""
+          src={PhoneChat}
           alt="phone-chat"
-          className="mb-[27px] h-[291px] w-[288px] bg-gray-50 object-cover object-center"
+          className="mb-[27px] h-[291px] object-cover object-center"
         />
         <div className="mb-[35px] text-center font-bold">
           <h2 className="text-[20px]/[24px] text-neutra900">

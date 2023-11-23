@@ -1,6 +1,6 @@
 import { dir } from 'i18next';
 import type { Metadata } from 'next';
-import { Noto_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { WrappedToast } from '@/components/Elements/Toast';
 import { Header } from '@/components/Layouts/Header';
@@ -9,9 +9,39 @@ import { ReduxProvider } from '@/stores/ReduxProvider';
 import './globals.css';
 import { languages } from '../i18n/settings';
 
-const inter = Noto_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700']
+const inter = localFont({
+  src: [
+    {
+      path: './_assets/fonts/SVN-Gilroy Light.woff',
+      weight: '300',
+      style: 'normal'
+    },
+    {
+      path: './_assets/fonts/SVN-Gilroy Regular.woff',
+      weight: '400',
+      style: 'normal'
+    },
+    {
+      path: './_assets/fonts/SVN-Gilroy Medium.woff',
+      weight: '500',
+      style: 'normal'
+    },
+    {
+      path: './_assets/fonts/SVN-Gilroy SemiBold.woff',
+      weight: '600',
+      style: 'normal'
+    },
+    {
+      path: './_assets/fonts/SVN-Gilroy Bold.woff',
+      weight: '700',
+      style: 'normal'
+    },
+    {
+      path: './_assets/fonts/SVN-Gilroy Heavy.woff',
+      weight: '800',
+      style: 'normal'
+    }
+  ]
 });
 
 export async function generateStaticParams() {

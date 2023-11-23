@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, memo, useMemo } from 'react';
 import { Controller } from 'react-hook-form';
 import { z } from 'zod';

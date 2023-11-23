@@ -22,6 +22,7 @@ export type StoreCategoryResponse = {
   id?: string;
   name: string;
   desc: string;
+  image: string;
 };
 
 export type StoreCategoryResquest = StoreCategoryResponse;

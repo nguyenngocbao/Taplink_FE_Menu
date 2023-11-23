@@ -16,10 +16,25 @@
   }
 }
 
+* {
+  @apply outline-primary;
+}
+
 body {
   @apply text-black;
 }
 
 p {
   @apply text-[16px]/[22.4px] font-[600];
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

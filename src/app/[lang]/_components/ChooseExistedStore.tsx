@@ -134,7 +134,7 @@ export const ChooseExistedStore = () => {
             onClickSufixIcon={() => onSearchByKeyword()}
           />
         </div>
-        <div className="relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
+        <div className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
           {stores.map(store => (
             <StoreItem
               data={store}
