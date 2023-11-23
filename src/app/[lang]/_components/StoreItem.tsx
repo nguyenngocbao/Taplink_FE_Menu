@@ -7,6 +7,7 @@ import { FC, HTMLAttributes } from 'react';
 import MarkerBlack from '@/app/[lang]/_assets/marker-black.svg';
 import NoImage from '@/app/[lang]/_assets/no-image.svg';
 import PhoneBlack from '@/app/[lang]/_assets/phone-black.svg';
+import { SkeletonProps } from '@/types';
 import { StoreResponse } from '@/types/store';
 import { mergeClasses } from '@/utils/common';
 import { getStoreAddress } from '@/utils/store';
@@ -49,5 +50,18 @@ export const StoreItem: FC<StoreItem> = ({ data, className, ...props }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+export const StoreItemSkeleton: FC<SkeletonProps> = ({ length = 1 }) => {
+  return (
+    <>
+      {[...new Array(length)].map((item, i) => (
+        <div
+          key={i}
+          className="loading bg-red h-[122px] w-full rounded-[10px]"
+        ></div>
+      ))}
+    </>
   );
 };

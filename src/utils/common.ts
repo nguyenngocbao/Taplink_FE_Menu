@@ -9,22 +9,12 @@ export const mergeClasses = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
-export const getErrorText = (e: ServerError): string => {
-  if (e?.errors) {
-    const errors = Object.values(e.errors);
-    return errors[0][0];
-  }
-  if (e?.message) {
-    return e.message;
-  }
-
-  if (typeof e === 'string') return e;
-
-  return 'Undefined error';
-};
-
 export const handleServerError = (e: ServerError) => {
-  toast.error(getErrorText(e));
+  if (e.isResolved) {
+    toast.error(e.message);
+    return;
+  }
+  throw e;
 };
 
 export const isOnServer = () => {

@@ -1,12 +1,10 @@
 export const COMMON_ROUTE = {
+  WELCOME: '/',
   LOGIN: `/login`,
-  FORGET_PASSWORD: `/forget-password`
-};
-
-export const ADMIN_ROUTE = {
-  ...COMMON_ROUTE
+  CREATE_STORE: '/store/create',
+  STORE: '/store'
 };
 
 export const USER_ROUTE = {
-  ...COMMON_ROUTE
+  MYPAGE: `/mypage`
 };

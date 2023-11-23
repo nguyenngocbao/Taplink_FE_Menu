@@ -3,6 +3,7 @@ export type APIStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 export type ServerError = {
   errors?: Record<string, Array<string>>;
   message?: string;
+  isResolved?: boolean;
 };
 
 export type ServerData<T> = {
@@ -59,4 +60,8 @@ export type SIZE = 'lg' | 'md' | 'sm';
 export interface Option {
   value: number | string;
   label: string;
+}
+
+export interface SkeletonProps {
+  length?: number;
 }

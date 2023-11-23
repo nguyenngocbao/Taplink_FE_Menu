@@ -7,6 +7,11 @@ import CheckListIcon from './_assets/checklist.png';
 import PhoneChat from './_assets/phone-chat.svg';
 import { ChooseExistedStore } from './_components/ChooseExistedStore';
 
+export const metadata = {
+  title: 'Taplink',
+  description: 'Welcome to taplink'
+};
+
 export default async function Home({ params: { lang } }) {
   const { t } = await useTranslation(lang, ['welcome', 'common']);
 

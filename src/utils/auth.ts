@@ -1,25 +1,10 @@
-import { login, getAuthUser } from '@/apis/auth';
-import { AdminLoginForm, UserResponse } from '@/types/auth';
+import { UserResponse } from '@/types/auth';
 import storage from '@/utils/storage';
 
 export async function handleUserResponse(data: UserResponse) {
   const { access_token, user } = data;
   storage.setToken(access_token);
   setClientCookie('session', access_token, 1);
-  return user;
-}
-
-export async function loadUser() {
-  if (storage.getToken()) {
-    const data = await getAuthUser();
-    return data;
-  }
-  return null;
-}
-
-export async function loginFn(data: AdminLoginForm) {
-  const response = await login(data);
-  const user = await handleUserResponse(response);
   return user;
 }
 

@@ -1,109 +1,38 @@
 'use client';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
+import { STORE_APIS } from '@/apis/store';
 import MarkerIcon from '@/app/[lang]/_assets/marker.png';
 import { useTranslation } from '@/app/i18n/client';
 import { Button, Dialog, InputField } from '@/components/Elements';
+import { useDataApi } from '@/hooks/useDataAPI';
 import { useDisclosure } from '@/hooks/useDisclosure';
 import { StoreResponse } from '@/types/store';
 
 import { SearchIcon } from './SearchIcon';
-import { StoreItem } from './StoreItem';
+import { StoreItem, StoreItemSkeleton } from './StoreItem';
 
 export const ChooseExistedStore = () => {
   const { t } = useTranslation(['welcome', 'common']);
   const { isOpen, open, close } = useDisclosure();
   const [keyword, setKeyword] = useState('');
   const [selectedStoreId, setSelectedStoreId] = useState(null);
-  const router = useRouter();
 
-  const stores: StoreResponse[] = [
-    {
-      id: '1',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    },
-    {
-      id: '2',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    },
-    {
-      id: '3',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    },
-    {
-      id: '4',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    },
-    {
-      id: '5',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    },
-    {
-      id: '6',
-      name: 'The coffee House Ngô Thì Nhậm',
-      phoneNumber: '0305 000 555',
-      image: '',
-      address: {
-        nation: 'Việt Nam',
-        detail: '56 Nguyễn Huệ',
-        ward: 'Bến Nghé',
-        district: 'Quân 1',
-        city: 'HCM'
-      }
-    }
-  ];
+  const getStoreApi = useDataApi<StoreResponse[]>(STORE_APIS.GET);
 
   const onSearchByKeyword = () => {
     console.log(keyword);
+    getStoreApi.get();
     setSelectedStoreId(null);
   };
+
+  useEffect(() => {
+    getStoreApi.get();
+  }, []);
+
+  console.log(getStoreApi.data);
 
   return (
     <>
@@ -135,25 +64,29 @@ export const ChooseExistedStore = () => {
           />
         </div>
         <div className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
-          {stores.map(store => (
-            <StoreItem
-              data={store}
-              key={store.id}
-              onClick={() => setSelectedStoreId(store.id)}
-              className={
-                selectedStoreId === store.id ? 'shadow-[0_0_0_2px_#1540C3]' : ''
-              }
-            />
-          ))}
+          {getStoreApi.loading ? (
+            <StoreItemSkeleton length={4} />
+          ) : (
+            getStoreApi.data?.map(store => (
+              <StoreItem
+                data={store}
+                key={store.id}
+                onClick={() => setSelectedStoreId(store.id)}
+                className={
+                  selectedStoreId === store.id
+                    ? 'shadow-[0_0_0_2px_#1540C3]'
+                    : ''
+                }
+              />
+            ))
+          )}
         </div>
         <div className="mt-[10px] flex justify-end gap-[10px]">
-          <Button
-            onClick={() => router.push(`/login?store_id=${selectedStoreId}`)}
-            disabled={selectedStoreId == null}
-            className="w-full"
-          >
-            {t('label.next', { ns: 'common' })}
-          </Button>
+          <Link className="w-full" href={`/login?store_id=${selectedStoreId}`}>
+            <Button disabled={selectedStoreId == null} className="w-full">
+              {t('label.next', { ns: 'common' })}
+            </Button>
+          </Link>
         </div>
       </Dialog>
     </>

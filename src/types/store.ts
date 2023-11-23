@@ -1,3 +1,5 @@
+import { Option } from '.';
+
 export type StoreAddress = {
   nation: string;
   city: string;
@@ -26,3 +28,5 @@ export type StoreCategoryResponse = {
 };
 
 export type StoreCategoryResquest = StoreCategoryResponse;
+
+export type StoreType = Option;

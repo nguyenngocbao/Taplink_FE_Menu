@@ -1,32 +1,25 @@
-'use client';
+// import { ADDRESS_APIS } from '@/apis/address';
+// import { STORE_APIS } from '@/apis/store';
+// import fetchServer from '@/lib/fetch-server';
+// import { AddressResponse } from '@/types/address';
+// import { StoreType } from '@/types/store';
 
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { StoreCreation } from './_components';
 
-import { StoreRequest } from '@/types/store';
+export const metadata = {
+  title: 'Store creation',
+  description: 'Create a new store in taplink'
+};
 
-import StoreForm from './_components/StoreForm';
+export default async function () {
+  // const storeTypes = await fetchServer<StoreType[]>(STORE_APIS.STORE_TYPE);
+  // const address = await fetchServer<AddressResponse>(ADDRESS_APIS.GET);
 
-export default function () {
-  const router = useRouter();
-
-  const onSubmit = useCallback(
-    async (values: StoreRequest) => {
-      console.log(values);
-      // toast.success('追加しました');
-      // router.push(ADMIN_ROUTE.DASHBOARD.USER.LIST);
-    },
-    [router]
-  );
+  // console.log(storeTypes, address);
 
   return (
     <main className="px-[16px] py-[29px]">
-      <StoreForm
-        storeTypes={[]}
-        userInfo={null}
-        isLoading={false}
-        onSubmit={onSubmit}
-      />
+      <StoreCreation />
     </main>
   );
 }

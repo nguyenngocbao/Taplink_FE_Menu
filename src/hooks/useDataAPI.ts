@@ -30,7 +30,6 @@ export const useDataApi = <Response, Data = Response, Error = unknown>(
       } catch (e) {
         setError(e);
         handleServerError(e);
-        throw e;
       } finally {
         setLoading(false);
       }
@@ -59,7 +58,6 @@ export const useDataApi = <Response, Data = Response, Error = unknown>(
       } catch (e) {
         setError(e);
         handleServerError(e);
-        throw e;
       } finally {
         setLoading(false);
       }
@@ -78,14 +76,12 @@ export const useDataApi = <Response, Data = Response, Error = unknown>(
         } else {
           setData(res as any);
         }
-        setLoading(false);
         setError(null);
 
         return res;
       } catch (e) {
         setError(e);
         handleServerError(e);
-        throw e;
       } finally {
         setLoading(false);
       }
@@ -104,14 +100,12 @@ export const useDataApi = <Response, Data = Response, Error = unknown>(
         } else {
           setData(res as any);
         }
-        setLoading(false);
         setError(null);
 
         return res;
       } catch (e) {
         setError(e);
         handleServerError(e);
-        throw e;
       } finally {
         setLoading(false);
       }
@@ -139,7 +133,6 @@ export const useDataApi = <Response, Data = Response, Error = unknown>(
       } catch (e) {
         setError(e);
         handleServerError(e);
-        throw e;
       } finally {
         setLoading(false);
       }

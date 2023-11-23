@@ -31,12 +31,12 @@ export const Dialog = ({
         <UIDialog
           as="div"
           static
-          className="fixed inset-0 z-50 overflow-y-auto"
+          className="fixed inset-0 z-50 overflow-hidden"
           open={isOpen}
           onClose={onClose}
           initialFocus={initialFocus}
         >
-          <div className="flex min-h-screen items-center justify-center p-4 text-center sm:block sm:p-0">
+          <div className="flex min-h-screen items-center justify-center p-4 text-center">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -48,14 +48,6 @@ export const Dialog = ({
             >
               <UIDialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
             </Transition.Child>
-
-            {/* This element is to trick the browser into centering the modal contents. */}
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
             <Transition.Child
               as="div"
               enter="ease-out duration-300"
