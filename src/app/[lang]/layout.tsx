@@ -4,8 +4,8 @@ import localFont from 'next/font/local';
 
 import { WrappedToast } from '@/components/core/Toast';
 import { AuthProvider } from '@/components/features/login/AuthProvider';
-import { Header } from '@/components/layoutsq/Header';
-import { ProgressBar } from '@/components/layoutsq/ProgressBar';
+import { Header } from '@/components/layouts/Header';
+import { ProgressBar } from '@/components/layouts/ProgressBar';
 import { ReduxProvider } from '@/stores/ReduxProvider';
 
 import './globals.css';

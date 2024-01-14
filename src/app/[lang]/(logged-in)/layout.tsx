@@ -1,4 +1,4 @@
-import { AuthClientSetup } from '@/components/layoutsq/AuthClientSetup';
+import { AuthClientSetup } from '@/components/layouts/AuthClientSetup';
 import { getServerSession } from '@/lib/auth';
 
 export default async function ({ children }) {
