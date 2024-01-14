@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import CheckListIcon from '@/assets/image/checklist.png';
 import PhoneChat from '@/assets/image/phone-chat.svg';
+import { STORE_OWNER_ROUTE } from '@/constants/routes';
 
 import { useTranslation } from '../i18n';
 
@@ -15,6 +16,7 @@ export const metadata = {
 
 export default async function Home({ params: { lang }, searchParams }) {
   const isOpenChoosingStore = !!searchParams?.['open_choosing_store'];
+  const deviceId = searchParams?.['device_id'];
   const { t } = await useTranslation(lang, ['welcome', 'common']);
 
   return (
@@ -35,7 +37,10 @@ export default async function Home({ params: { lang }, searchParams }) {
         </div>
         <div>
           <Link
-            href="/store/create"
+            href={{
+              pathname: STORE_OWNER_ROUTE.CREATE_STORE,
+              search: deviceId ? `device_id=${deviceId}` : ''
+            }}
             className="mb-[16px] flex items-center gap-[17px] rounded-[10px] bg-primary-bg px-[20px] py-[17px]"
           >
             <Image

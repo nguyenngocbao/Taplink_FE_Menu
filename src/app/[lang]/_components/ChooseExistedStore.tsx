@@ -1,9 +1,8 @@
 'use client';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useTranslation } from '@/app/i18n/client';
@@ -11,7 +10,9 @@ import MarkerIcon from '@/assets/image/marker.png';
 import { Button, Dialog, InputField } from '@/components/core';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi, useDisclosure } from '@/hooks';
+import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
+import { PaginationRes } from '@/types';
 import { Store } from '@/types/store';
 import { mergeQueryParams } from '@/utils/common';
 
@@ -19,6 +20,9 @@ import { SearchIcon } from './SearchIcon';
 import { StoreItem, StoreItemSkeleton } from './StoreItem';
 
 export const ChooseExistedStore = ({ isInitialOpen }) => {
+  const query = useSearchParams();
+  const deviceId = query.get('device_id');
+
   const { t } = useTranslation(['welcome', 'common']);
   const { isOpen, open, close } = useDisclosure(isInitialOpen);
   const [keyword, setKeyword] = useState('');
@@ -26,11 +30,29 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const getStore = useDataApi<Store[]>(storeService.list.bind(storeService));
+  const getStore = useDataApi<PaginationRes<Store>>(
+    storeService.list.bind(storeService)
+  );
+  const connectDevice = useDataApi(
+    deviceService.connectStore.bind(deviceService)
+  );
 
-  const onSearchByKeyword = () => {
+  const onSearchByKeyword = (e?: FormEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
     console.log(keyword);
     setSelectedStoreId(null);
+    getStore.call({ searchKey: keyword });
+  };
+
+  const onClickNext = async () => {
+    if (deviceId && selectedStoreId) {
+      await connectDevice.call({
+        uuid: deviceId,
+        storeId: selectedStoreId
+      });
+      toast.success(t('successConnect'));
+    }
+    router.push(`${STORE_OWNER_ROUTE.STORE}/${selectedStoreId}`);
   };
 
   const onOpen = () => {
@@ -54,6 +76,10 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
     }
   };
 
+  useEffect(() => {
+    getStore.call();
+  }, []);
+
   return (
     <>
       <button
@@ -75,38 +101,48 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
         </div>
       </button>
       <Dialog title={t('chooseYourStore')} isOpen={isOpen} onClose={close}>
-        <div className="mb-[10px]">
+        <form onSubmit={onSearchByKeyword} className="mb-[10px]">
           <InputField
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
             sufixIcon={<SearchIcon className="h-[20px] w-[20px]" />}
             onClickSufixIcon={() => onSearchByKeyword()}
           />
-        </div>
+        </form>
         <div className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
           {getStore.isLoading ? (
             <StoreItemSkeleton length={4} />
           ) : (
-            (getStore.data ?? [])?.map(store => (
-              <StoreItem
-                data={store}
-                key={store.id}
-                onClick={() => setSelectedStoreId(store.id)}
-                className={
-                  selectedStoreId === store.id
-                    ? 'shadow-[0_0_0_2px_#1540C3]'
-                    : ''
-                }
-              />
-            ))
+            <>
+              {(getStore.data?.content ?? [])?.map(store => (
+                <StoreItem
+                  data={store}
+                  key={store.id}
+                  onClick={() => setSelectedStoreId(store.id)}
+                  className={
+                    selectedStoreId === store.id
+                      ? 'shadow-[0_0_0_2px_#1540C3]'
+                      : ''
+                  }
+                />
+              ))}
+              {!getStore.data?.content?.length && (
+                <p className="mt-[10px]">{`${t('noStore')} "${
+                  getStore.params?.[0]?.searchKey
+                }"`}</p>
+              )}
+            </>
           )}
         </div>
         <div className="mt-[10px] flex justify-end gap-[10px]">
-          <Link className="w-full" href={`/login?store_id=${selectedStoreId}`}>
-            <Button disabled={selectedStoreId == null} className="w-full">
-              {t('label.next', { ns: 'common' })}
-            </Button>
-          </Link>
+          <Button
+            disabled={selectedStoreId == null || connectDevice.isLoading}
+            isLoading={connectDevice.isLoading}
+            onClick={onClickNext}
+            className="w-full"
+          >
+            {deviceId ? t('connect') : t('label.next', { ns: 'common' })}
+          </Button>
         </div>
       </Dialog>
     </>

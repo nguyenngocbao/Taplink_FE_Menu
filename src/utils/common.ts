@@ -190,16 +190,18 @@ export async function callApi<R>(
     case 'DELETE':
     case 'delete':
       if (isOnServer()) {
-        return fetchServer(href, method, {
+        const params = new URLSearchParams(body);
+        return fetchServer(`${href}?${params}`, method, {
           tags: [href],
           isMock: isMock,
-          body: body
+          headers: headers
         });
       }
 
       return await axios[method.toLowerCase()](href, {
         params: body,
-        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined
+        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
+        ...(headers && { headers: headers })
       });
     case 'POST':
     case 'post':
@@ -209,13 +211,14 @@ export async function callApi<R>(
         return fetchServer(href, method, {
           tags: [href],
           isMock: isMock,
-          body: body
+          body: body,
+          headers: headers
         });
       }
 
       return await axios[method.toLowerCase()](href, body, {
         baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
-        headers: headers
+        ...(headers && { headers: headers })
       });
 
     default:

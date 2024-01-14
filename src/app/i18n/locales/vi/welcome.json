@@ -5,5 +5,8 @@
   "createNewStoreDesc": "Thiết lập thông tin cửa hàng, setup menu mới",
   "hasExistedStore": "Đã có cửa hàng",
   "hasExistedStoreDesc": "Chọn cửa hàng mà bạn đã sở hữu",
-  "chooseYourStore": "Chọn cửa hàng của bạn"
+  "chooseYourStore": "Chọn cửa hàng của bạn",
+  "noStore": "Không tìm thấy cửa hàng với từ khóa",
+  "connect": "Kết nối thiết bị",
+  "successConnect": "Kết nối thành công!"
 }

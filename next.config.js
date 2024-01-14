@@ -5,7 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'loremflickr.com'
+        hostname: 'api-menu.taplink.network'
       }
     ]
   },

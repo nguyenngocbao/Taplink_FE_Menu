@@ -41,8 +41,12 @@ export type PaginationMeta = Partial<{
 }>;
 
 export type PaginationRes<T> = {
-  data: T[];
-  pagination: PaginationMeta;
+  content: T[];
+  pageNo: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 };
 
 export type SIZE = 'lg' | 'md' | 'sm';

@@ -5,5 +5,8 @@
   "createNewStoreDesc": "Set up store information, create a new menu",
   "hasExistedStore": "Existing Store",
   "hasExistedStoreDesc": "Select the store you already own",
-  "chooseYourStore": "Choose your store"
+  "chooseYourStore": "Choose your store",
+  "noStore": "No stores found with the keyword",
+  "connect": "Connect this device",
+  "successConnect": "Connect successfully!"
 }

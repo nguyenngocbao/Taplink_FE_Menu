@@ -26,7 +26,7 @@ class StoreCRUD extends CRUDAbstract<Store, StoreResponse> {
       STORE_APIs.INDEX,
       'POST',
       item,
-      false,
+      this.isMock,
       {
         'content-type': 'multipart/form-data'
       }

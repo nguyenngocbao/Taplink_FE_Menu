@@ -34,16 +34,16 @@ export abstract class CRUDAbstract<T extends { id?: ID }, R>
     return this.mapDTO(res);
   }
 
-  async list(params): Promise<PaginationRes<T>> {
+  async list(params?: any): Promise<PaginationRes<T>> {
     const res = await callApi<PaginationRes<R>>(
       this.prefix,
       'GET',
       params,
-      true
+      this.isMock
     );
 
-    const dtos = res.data.map(this.mapDTO);
-    return { ...res, data: dtos };
+    const dtos = res.content.map(this.mapDTO);
+    return { ...res, content: dtos };
   }
 
   async get(id: ID): Promise<T | null> {

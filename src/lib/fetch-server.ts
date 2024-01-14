@@ -15,6 +15,7 @@ async function fetchServer<Res>(
     tags?: any;
     isMock?: boolean;
     noAuth?: boolean;
+    headers?: Record<string, string>;
   }
 ): Promise<Res> {
   try {
@@ -33,7 +34,8 @@ async function fetchServer<Res>(
         ...(!!session &&
           !options?.noAuth && {
             Authorization: `Bearer ${session?.accessToken}`
-          })
+          }),
+        ...(options.headers && options.headers)
       },
       body: options?.body,
       next: {
