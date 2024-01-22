@@ -19,7 +19,13 @@
   "priceType": "Loại giá",
   "priceTypePlaceholder": "Chọn loại giá",
   "price": "Giá",
+  "priceFrom": "Giá từ",
+  "priceTo": "Giá đến",
+  "priceForSize": "Giá cho size",
   "pricePlaceholder": "Nhập giá",
   "createItem": "Thêm sản phẩm",
-  "updateItem": "Cập nhật sản phẩm"
+  "updateItem": "Cập nhật sản phẩm",
+  "createItemSuccess": "Tạo sản phẩm thành công!",
+  "createItemFail": "Tạo sản phẩm thất bại",
+  "noCategories": "Vui lòng thêm ít nhất một thể loại trước khi thêm sản phẩm mới."
 }

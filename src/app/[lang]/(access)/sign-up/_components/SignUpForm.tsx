@@ -3,11 +3,11 @@ import { z } from 'zod';
 
 import { useTranslation } from '@/app/i18n/client';
 import { Button, Form, InputField } from '@/components/core';
-import { SignupRequest } from '@/types/user';
+import { SignupModal } from '@/types/user';
 
 interface SignUpForm {
   isLoading?: boolean;
-  onSubmit?: (values: SignupRequest) => void;
+  onSubmit?: (values: SignupModal) => void;
 }
 
 export const SignUpForm: FC<SignUpForm> = memo(({ isLoading, onSubmit }) => {
@@ -32,7 +32,7 @@ export const SignUpForm: FC<SignUpForm> = memo(({ isLoading, onSubmit }) => {
   );
 
   return (
-    <Form<SignupRequest, typeof schema> onSubmit={onSubmit} schema={schema}>
+    <Form<SignupModal, typeof schema> onSubmit={onSubmit} schema={schema}>
       {({ register, formState }) => {
         return (
           <>

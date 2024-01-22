@@ -42,11 +42,11 @@ export type PaginationMeta = Partial<{
 
 export type PaginationRes<T> = {
   content: T[];
-  pageNo: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  last: boolean;
+  pageNo?: number;
+  pageSize?: number;
+  totalElements?: number;
+  totalPages?: number;
+  last?: boolean;
 };
 
 export type SIZE = 'lg' | 'md' | 'sm';
@@ -54,6 +54,12 @@ export type SIZE = 'lg' | 'md' | 'sm';
 export interface Option {
   value: number | string | boolean;
   label: string;
+}
+
+export interface OptionRes {
+  id: number;
+  code: string;
+  name: string;
 }
 
 export interface SkeletonProps {

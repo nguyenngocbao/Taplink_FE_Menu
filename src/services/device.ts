@@ -1,6 +1,6 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
-import { ConnectStoreRequest, DeviceResponse } from '@/types/device';
+import { ConnectStoreReqPayload, DeviceModal } from '@/types/device';
 import { isOnServer } from '@/utils/common';
 
 export const DEVICE_APIs = {
@@ -8,7 +8,7 @@ export const DEVICE_APIs = {
 };
 
 class DeviceService {
-  async connectStore(body: ConnectStoreRequest): Promise<unknown> {
+  async connectStore(body: ConnectStoreReqPayload): Promise<unknown> {
     let res = null;
     if (isOnServer()) {
       res = await fetchServer(DEVICE_APIs.INDEX, 'POST', { body });
@@ -18,10 +18,10 @@ class DeviceService {
     return res;
   }
 
-  async get(uuid: string): Promise<DeviceResponse> {
-    let res: DeviceResponse = null;
+  async get(uuid: string): Promise<DeviceModal> {
+    let res: DeviceModal = null;
     if (isOnServer()) {
-      res = await fetchServer<DeviceResponse>(
+      res = await fetchServer<DeviceModal>(
         `${DEVICE_APIs.INDEX}/${uuid}`,
         'GET'
       );

@@ -5,17 +5,18 @@ import { FC, Fragment, HTMLAttributes } from 'react';
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import { ItemRequest } from '@/types/item';
+import Drink1 from '@/assets/image/drink1.png';
+import { ItemDTO } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
-interface TextCard2 extends HTMLAttributes<HTMLElement> {
+interface ImageCard2 extends HTMLAttributes<HTMLElement> {
   t: any;
-  data?: ItemRequest;
+  data?: ItemDTO;
   onEdit?: () => void;
   onRemove?: () => void;
 }
 
-export const TextCard2: FC<TextCard2> = ({
+export const ImageCard2: FC<ImageCard2> = ({
   t,
   data,
   className,
@@ -23,24 +24,25 @@ export const TextCard2: FC<TextCard2> = ({
   onRemove,
   ...props
 }) => {
-  console.log(data);
   return (
     <article
       className={mergeClasses(
-        'relative flex flex-col gap-[9px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px] text-left',
+        'relative flex flex-col gap-[29px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
         className
       )}
       {...props}
     >
-      <div className="relative w-full rounded-[10px] bg-primary-bg2 p-[25px_27px_7px_12px]">
+      <div className="relative h-[142px] w-full rounded-[10px] bg-primary-bg2">
         <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
           {t('new')}
         </div>
-        <div>
-          <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-            Chăm sóc da toàn thân
-          </p>
-        </div>
+        <Image
+          src={data?.image || Drink1}
+          alt=""
+          width={200}
+          height={147}
+          className="absolute left-[50%] top-[24px] h-[147px] w-fit max-w-full translate-x-[-50%]"
+        />
         <Menu
           as="div"
           className="absolute right-0 top-[7px] inline-block h-[20px] w-[20px]"
@@ -91,11 +93,14 @@ export const TextCard2: FC<TextCard2> = ({
         </Menu>
       </div>
 
-      <div className="px-[12px]">
-        <p className="mb-[11px] text-[14px]/[19.6px] font-normal text-[#000]">
-          Lorem Ipsum is simply dummy text of the printing
+      <div>
+        <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
+          {data.name}
         </p>
-        <span className="flex items-center justify-between gap-[13px]">
+        <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
+          {data?.description}
+        </p>
+        <span className="flex items-center justify-center gap-[13px]">
           <span className="text-[20px]/[24px] font-bold">25.000đ</span>
           <span className="flex gap-[2px] text-[14px]/[24px] font-normal">
             <svg

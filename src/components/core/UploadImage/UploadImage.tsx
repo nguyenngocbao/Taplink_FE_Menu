@@ -31,10 +31,11 @@ interface UploadImageProps
   src?: FileList | File | string;
   disabled?: boolean;
   onChange?: (file: string) => void;
+  aspect?: number;
 }
 
 export const UploadImage: FC<UploadImageProps> = memo(
-  ({ src, className, disabled, onChange, ...props }) => {
+  ({ src, className, disabled, onChange, aspect = 343 / 210, ...props }) => {
     const { t } = useTranslation('common');
     const labelRef = useRef<HTMLLabelElement>(null);
     const [tempImage, setTempImage] = useState<string>(null);
@@ -208,7 +209,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
               crop={crop}
               zoom={zoom}
               showGrid
-              aspect={343 / 210}
+              aspect={aspect}
               onCropChange={setCrop}
               onCropComplete={onCropComplete}
               onZoomChange={setZoom}

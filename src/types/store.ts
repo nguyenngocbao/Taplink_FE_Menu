@@ -8,7 +8,7 @@ export type StoreAddress = {
   detail: string;
 };
 
-export type Store = {
+export type StoreDTO = {
   id?: ID;
   name: string;
   storeTypeId: number | string;
@@ -20,30 +20,31 @@ export type Store = {
   wifiPass: string;
   storeTemplateId: number;
   menuTemplateId: number;
+  phone?: string;
 };
 
-export type StoreResponse = {
+export type StoreModal = {
   id: ID;
   name: string;
   wifiPass: string;
   storeTemplateId: number;
   menuTemplateId: number;
-  address: string;
+  address: string; // full address
   wardId: number;
   storeTypeId: number;
 };
 
-export type StoreCategoryResponse = {
+export type StorePostReq = FormData;
+
+export type StorePutReq = FormData;
+
+export type StoreCategoryModal = {
   id?: string;
+  storeId: number;
+  templateId: number;
+  description: string;
   name: string;
-  desc: string;
   image: string;
 };
 
-export type StoreCategoryResquest = StoreCategoryResponse;
-
-export type StoreTypeResponse = {
-  id: number;
-  code: string;
-  name: string;
-};
+export type StoreCategoryPostReq = StoreCategoryModal;

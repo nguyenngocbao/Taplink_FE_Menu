@@ -19,7 +19,13 @@
   "priceType": "Price type",
   "priceTypePlaceholder": "Select price type",
   "price": "Price",
+  "priceFrom": "Price from",
+  "priceTo": "Price to",
+  "priceForSize": "Price for size",
   "pricePlaceholder": "Enter price",
   "createItem": "Add item",
-  "updateItem": "Update item"
+  "updateItem": "Update item",
+  "createItemSuccess": "Create item successfully!",
+  "createItemFail": "Create item fail",
+  "noCategories": "Please add at least one category before adding a new item."
 }

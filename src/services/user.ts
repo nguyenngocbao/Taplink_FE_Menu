@@ -1,6 +1,6 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
-import { SignupRequest } from '@/types/user';
+import { SignupModal } from '@/types/user';
 import { isOnServer } from '@/utils/common';
 
 export const USER_APIs = {
@@ -8,7 +8,7 @@ export const USER_APIs = {
 };
 
 class UserService {
-  async signUp(body: SignupRequest): Promise<unknown> {
+  async signUp(body: SignupModal): Promise<unknown> {
     let res = null;
 
     if (isOnServer()) {

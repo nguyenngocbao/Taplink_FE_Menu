@@ -6,7 +6,6 @@ export function useClickOutside(
 ) {
   useEffect(() => {
     const handleOnClickOutside = event => {
-      console.log(event.target);
       if (elements.some(element => element?.contains(event.target))) {
         return;
       }

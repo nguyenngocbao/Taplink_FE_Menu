@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
       // }
 
       if (user) {
-        return { ...token, ...user, role: user.role };
+        return { ...token, ...user, role: user.role ?? 'store_owner' };
       }
 
       const { exp: accessTokenExpires } = decodeJWT(token.accessToken);

@@ -6,12 +6,12 @@ import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
 import Spa from '@/assets/image/spa.png';
-import { ItemRequest } from '@/types/item';
+import { ItemDTO } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
 interface GroupImageCard extends HTMLAttributes<HTMLElement> {
   t: any;
-  data?: ItemRequest;
+  data?: ItemDTO;
   onEdit?: () => void;
   onRemove?: () => void;
 }

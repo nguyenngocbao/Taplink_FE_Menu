@@ -3,20 +3,42 @@ import { callApi } from '@/utils/common';
 
 import { PaginationRes } from '.';
 
+export interface useCRUDServiceProps<
+  DTO extends { id?: ID },
+  Modal = unknown,
+  CreateReqPayload = DTO,
+  UpdateReqPayload = CreateReqPayload
+> {
+  service: CRUDAbstract<DTO, Modal, CreateReqPayload, UpdateReqPayload>;
+}
+
 export type ID = number | string;
 
-export interface CRUDInterface<T> {
+export interface CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload> {
   prefix: string;
   isMock: boolean;
-  create(item: T, revalidate?: boolean): Promise<T>;
-  list(params: Record<string, string>): Promise<PaginationRes<T>>;
-  get(id: ID): Promise<T | null>;
-  update(newItem: T, id?: ID, revalidate?: boolean): Promise<T>;
+  create(
+    item: CreateReqPayload,
+    revalidate?: boolean,
+    headers?: Record<string, string>
+  ): Promise<DTO>;
+  list(params: Record<string, unknown>): Promise<PaginationRes<DTO>>;
+  get(id: ID): Promise<DTO | null>;
+  update(
+    newItem: UpdateReqPayload,
+    id: ID,
+    revalidate?: boolean,
+    headers?: Record<string, string>
+  ): Promise<DTO>;
   delete(id: ID, revalidate?: boolean): Promise<any>;
 }
 
-export abstract class CRUDAbstract<T extends { id?: ID }, R>
-  implements CRUDInterface<T>
+export abstract class CRUDAbstract<
+  DTO extends { id?: ID },
+  Modal,
+  CreateReqPayload = Modal,
+  UpdateReqPayload = CreateReqPayload
+> implements CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload>
 {
   prefix: string;
   isMock: boolean;
@@ -26,49 +48,73 @@ export abstract class CRUDAbstract<T extends { id?: ID }, R>
     this.isMock = isMock;
   }
 
-  abstract mapDTO(res: R): T;
+  abstract mapDTO(res: Modal): DTO;
 
-  async create(item: T, revalidate = true): Promise<T> {
-    const res: R = await callApi(this.prefix, 'POST', item, this.isMock);
+  async create(
+    item: CreateReqPayload,
+    revalidate = true,
+    headers?: Record<string, string>
+  ): Promise<DTO> {
+    const res: Modal = await callApi(
+      this.prefix,
+      'POST',
+      item,
+      this.isMock,
+      headers
+    );
     revalidate && revalidateTag(this.prefix);
     return this.mapDTO(res);
   }
 
-  async list(params?: any): Promise<PaginationRes<T>> {
-    const res = await callApi<PaginationRes<R>>(
+  async list(params): Promise<PaginationRes<DTO>> {
+    const res = await callApi<PaginationRes<Modal>>(
       this.prefix,
       'GET',
       params,
       this.isMock
     );
 
-    const dtos = res.content.map(this.mapDTO);
-    return { ...res, content: dtos };
+    if (res.content) {
+      const dtos = res.content.map(this.mapDTO);
+      return { ...res, content: dtos };
+    }
+    const dtos: DTO[] = res as any;
+    return { content: dtos };
   }
 
-  async get(id: ID): Promise<T | null> {
-    const res: R = await callApi(
-      this.prefix + '/' + id,
-      'GET',
-      undefined,
-      this.isMock
-    );
-    return this.mapDTO(res);
+  async get(id: ID): Promise<DTO | null> {
+    try {
+      const res: Modal = await callApi(
+        this.prefix + '/' + id,
+        'GET',
+        undefined,
+        this.isMock
+      );
+      return this.mapDTO(res);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  async update(newItem: T, id: ID = newItem.id, revalidate = true): Promise<T> {
-    const res: R = await callApi(
+  async update(
+    newItem: UpdateReqPayload,
+    id: ID,
+    revalidate = true,
+    headers?: Record<string, string>
+  ): Promise<DTO> {
+    const res: Modal = await callApi(
       this.prefix + '/' + id,
       'PUT',
       newItem,
-      this.isMock
+      this.isMock,
+      headers
     );
     revalidate && revalidateTag(this.prefix);
     return this.mapDTO(res);
   }
 
   async delete(id: ID, revalidate = true): Promise<any> {
-    const res: R = await callApi(
+    const res: Modal = await callApi(
       this.prefix + '/' + id,
       'DELETE',
       undefined,

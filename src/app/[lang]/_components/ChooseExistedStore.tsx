@@ -13,7 +13,7 @@ import { useDataApi, useDisclosure } from '@/hooks';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 import { PaginationRes } from '@/types';
-import { Store } from '@/types/store';
+import { StoreDTO } from '@/types/store';
 import { mergeQueryParams } from '@/utils/common';
 
 import { SearchIcon } from './SearchIcon';
@@ -29,8 +29,10 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
   const [selectedStoreId, setSelectedStoreId] = useState(null);
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { data } = useSession();
+  const userId = data?.user?.id;
 
-  const getStore = useDataApi<PaginationRes<Store>>(
+  const getStore = useDataApi<PaginationRes<StoreDTO>>(
     storeService.list.bind(storeService)
   );
   const connectDevice = useDataApi(
@@ -39,9 +41,8 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
 
   const onSearchByKeyword = (e?: FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
-    console.log(keyword);
     setSelectedStoreId(null);
-    getStore.call({ searchKey: keyword });
+    getStore.call({ searchKey: keyword, userId: userId });
   };
 
   const onClickNext = async () => {
@@ -77,8 +78,8 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
   };
 
   useEffect(() => {
-    getStore.call();
-  }, []);
+    userId && getStore.call({ userId: userId });
+  }, [userId]);
 
   return (
     <>

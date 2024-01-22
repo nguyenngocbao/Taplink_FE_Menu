@@ -3,20 +3,20 @@ import Image from 'next/image';
 import { FC, Fragment, HTMLAttributes } from 'react';
 
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
-import ThreeDot from '@/assets/icon/three-dot-white.svg';
+import ThreeDot from '@/assets/icon/three-dot.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import Food1 from '@/assets/image/food1.png';
-import { ItemRequest } from '@/types/item';
+import { PRICE_SIZE_TYPES } from '@/constants/item';
+import { ItemDTO, PriceType } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
-interface ImageCard1 extends HTMLAttributes<HTMLElement> {
+interface TextCard2 extends HTMLAttributes<HTMLElement> {
   t: any;
-  data?: ItemRequest;
+  data?: ItemDTO;
   onEdit?: () => void;
   onRemove?: () => void;
 }
 
-export const ImageCard1: FC<ImageCard1> = ({
+export const TextCard2: FC<TextCard2> = ({
   t,
   data,
   className,
@@ -24,22 +24,23 @@ export const ImageCard1: FC<ImageCard1> = ({
   onRemove,
   ...props
 }) => {
-  console.log(data);
   return (
     <article
       className={mergeClasses(
-        'relative flex flex-col gap-[12px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
+        'relative flex flex-col justify-between gap-[9px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px] text-left',
         className
       )}
       {...props}
     >
-      <div className="relative h-[106px] w-full rounded-[10px]">
-        <Image
-          src={Food1}
-          alt=""
-          className="rounded-[10px] object-cover object-top"
-          fill
-        />
+      <div className="relative w-full rounded-[10px] bg-primary-bg2 p-[25px_27px_7px_12px]">
+        <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
+          {t('new')}
+        </div>
+        <div>
+          <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
+            {data?.name}
+          </p>
+        </div>
         <Menu
           as="div"
           className="absolute right-0 top-[7px] inline-block h-[20px] w-[20px]"
@@ -88,20 +89,41 @@ export const ImageCard1: FC<ImageCard1> = ({
             </Menu.Items>
           </Transition>
         </Menu>
-        <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
-          {t('new')}
-        </div>
       </div>
 
-      <div className="px-[8px] text-left">
-        <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-          Hamburger thịt
-        </p>
-        <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
-          Lorem Ipsum is simply dummy text
+      <div className="px-[12px]">
+        <p className="mb-[11px] text-[14px]/[19.6px] font-normal text-[#000]">
+          {data?.description}
         </p>
         <span className="flex items-center justify-between gap-[13px]">
-          <span className="text-[20px]/[24px] font-bold">25.000đ</span>
+          {data?.priceTypeId === PriceType.Single && (
+            <span className="text-[20px]/[24px] font-bold">
+              {data.priceInfo.price.toLocaleString()}đ
+            </span>
+          )}
+
+          {data?.priceTypeId === PriceType.Range && (
+            <span className="text-[15px]/[20px] font-bold">
+              {data.priceInfo.price[0].toLocaleString()}-
+              {data.priceInfo.price[1].toLocaleString()}đ
+            </span>
+          )}
+
+          {data?.priceTypeId === PriceType.Size && (
+            <span className="flex flex-[1] flex-col text-[15px]/[20px] font-bold">
+              {PRICE_SIZE_TYPES.map(type => {
+                return (
+                  <span className="flex justify-between" key={type.value}>
+                    <span>{type.label}: </span>
+                    <span>
+                      {data.priceInfo.price[type.value].toLocaleString()}đ
+                    </span>
+                  </span>
+                );
+              })}
+            </span>
+          )}
+
           <span className="flex gap-[2px] text-[14px]/[24px] font-normal">
             <svg
               width="12"

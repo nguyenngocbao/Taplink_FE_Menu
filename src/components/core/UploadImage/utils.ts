@@ -100,5 +100,5 @@ export default async function getCroppedImg(
     pixelCrop.height
   );
 
-  return croppedCanvas.toDataURL('image/jpeg');
+  return croppedCanvas.toDataURL('image/png');
 }

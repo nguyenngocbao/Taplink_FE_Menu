@@ -25,6 +25,7 @@ export function useLogin<LoginForm>({
         redirect: false
       });
       if (res.status === 200) {
+        setServerError(null);
         router.push(callbackUrl);
         if (successMessage) {
           toast.success(successMessage);
@@ -33,9 +34,10 @@ export function useLogin<LoginForm>({
       }
 
       setServerError(res.error);
-      return res.error;
-    } finally {
       setLoading(false);
+      return res.error;
+    } catch (e) {
+      console.log(e);
     }
   };
 

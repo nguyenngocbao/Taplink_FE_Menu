@@ -7,11 +7,11 @@ import MarkerBlack from '@/assets/icon/marker-black.svg';
 import PhoneBlack from '@/assets/icon/phone-black.svg';
 import NoImage from '@/assets/image/no-image.svg';
 import { SkeletonProps } from '@/types';
-import { Store } from '@/types/store';
+import { StoreDTO } from '@/types/store';
 import { mergeClasses } from '@/utils/common';
 
 interface StoreItem extends HTMLAttributes<HTMLDivElement> {
-  data: Store;
+  data: StoreDTO;
 }
 
 export const StoreItem: FC<StoreItem> = ({ data, className, ...props }) => {
@@ -37,11 +37,11 @@ export const StoreItem: FC<StoreItem> = ({ data, className, ...props }) => {
         <div className="flex flex-col justify-center gap-[5px]">
           <p className="flex items-center gap-[8px] text-[12px]/[16.8px]">
             <Image src={MarkerBlack} alt="" className="h-[10px] w-[10px]" />
-            {/* <span>{data.phoneNumber}</span> */}
+            <span>{data.phone}</span>
           </p>
           <p className="flex items-start gap-[8px] text-[12px]/[16.8px]">
             <Image src={PhoneBlack} alt="" className="h-[10px] w-[10px]" />
-            {/* <span>{getStoreAddress(data.address, String(lang))}</span> */}
+            <span>{data.address}</span>
           </p>
         </div>
       </div>

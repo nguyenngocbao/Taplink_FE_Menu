@@ -8,7 +8,7 @@ import { useTranslation } from '@/app/i18n/client';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
 import { userService } from '@/services/user';
-import { SignupRequest } from '@/types/user';
+import { SignupModal } from '@/types/user';
 
 import { SignUpForm } from './SignUpForm';
 
@@ -23,7 +23,7 @@ export const SignUp: FC = () => {
   );
 
   const onSubmit = useCallback(
-    async (values: SignupRequest) => {
+    async (values: SignupModal) => {
       try {
         await signUp(values);
         toast.success(t('successMessage'));

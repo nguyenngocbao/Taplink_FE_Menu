@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
+import { toast } from 'react-toastify';
 import { z } from 'zod';
 
 import { useTranslation } from '@/app/i18n/client';
@@ -13,24 +14,39 @@ import {
   InputField,
   TextAreaField
 } from '@/components/core';
-import { useDisclosure } from '@/hooks';
-import { StoreCategoryResquest } from '@/types/store';
+import { useDataApi, useDisclosure } from '@/hooks';
+import { categoryService } from '@/services/category';
+import { StoreCategoryPostReq } from '@/types/store';
 
-export const CategoryCreation = () => {
+interface CategoryCreation {
+  storeId: string;
+}
+
+export const CategoryCreation: FC<CategoryCreation> = ({ storeId }) => {
   const { isOpen, open, close } = useDisclosure();
   const { t } = useTranslation('myPage');
+  const addCategoryApi = useDataApi(
+    categoryService.create.bind(categoryService)
+  );
 
   const schema = useMemo(
     () =>
       z.object({
         name: z.string().min(1, t('message.fieldRequired', { ns: 'common' })),
-        desc: z.string().min(1, t('message.fieldRequired', { ns: 'common' }))
+        description: z
+          .string()
+          .min(1, t('message.fieldRequired', { ns: 'common' }))
       }),
     []
   );
-  const onSubmit = useCallback(async (value: StoreCategoryResquest) => {
-    console.log(value);
-    // toast.success('追加しました');
+
+  const onSubmit = useCallback(async (value: StoreCategoryPostReq) => {
+    await addCategoryApi.call({
+      ...value,
+      storeId: Number(storeId)
+    });
+    close();
+    toast.success('追加しました');
   }, []);
 
   return (
@@ -45,7 +61,7 @@ export const CategoryCreation = () => {
         </span>
       </button>
       <Dialog title={t('addCategory')} isOpen={isOpen} onClose={close}>
-        <Form<StoreCategoryResquest, typeof schema>
+        <Form<StoreCategoryPostReq, typeof schema>
           onSubmit={onSubmit}
           schema={schema}
           className="w-[calc(100vw_-_64px)] text-left"
@@ -63,13 +79,19 @@ export const CategoryCreation = () => {
 
                 <TextAreaField
                   aria-label="desc"
-                  error={formState.errors['desc']}
-                  registration={register('desc', { value: '' })}
+                  error={formState.errors['description']}
+                  registration={register('description', { value: '' })}
                   label={t('desc')}
                   placeholder={t('descPlaceholder')}
                 />
 
-                <Button className="w-full">{t('save')}</Button>
+                <Button
+                  isLoading={addCategoryApi.isLoading}
+                  disabled={addCategoryApi.isLoading}
+                  className="w-full"
+                >
+                  {t('save')}
+                </Button>
               </>
             );
           }}

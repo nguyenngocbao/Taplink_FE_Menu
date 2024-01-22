@@ -15,13 +15,13 @@ import {
 import { useDataApi } from '@/hooks';
 import { addressService } from '@/services/address';
 import { Option } from '@/types';
-import { Store } from '@/types/store';
+import { StoreDTO } from '@/types/store';
 
 interface StoreFormProps {
-  data?: Store;
+  data?: StoreDTO;
   isLoading?: boolean;
   isEditable?: boolean;
-  onSubmit?: (values: Store) => void;
+  onSubmit?: (values: StoreDTO) => void;
   storeTypes: Option[];
   cityOptions: Option[];
 }
@@ -80,7 +80,7 @@ const StoreForm: FC<StoreFormProps> = memo(
 
     return userInfo !== undefined ? (
       <div>
-        <Form<Store, typeof schema>
+        <Form<StoreDTO, typeof schema>
           onSubmit={onSubmit}
           schema={schema}
           onChangeValue={async (value, name, type, methods) => {

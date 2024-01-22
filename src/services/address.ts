@@ -1,7 +1,7 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
 import { Option } from '@/types';
-import { City, District, Ward } from '@/types/address';
+import { CityModal, DistrictModal, WardModal } from '@/types/address';
 import { isOnServer } from '@/utils/common';
 
 export const ADDRESS_APIs = {
@@ -10,7 +10,7 @@ export const ADDRESS_APIs = {
 };
 
 class AddressService {
-  mapDTO(res: City | District): Option {
+  mapDTO(res: CityModal | DistrictModal): Option {
     if (!res) return null;
     const dto: Option = {
       label: res.name,
@@ -20,9 +20,9 @@ class AddressService {
   }
 
   async getCities(): Promise<Option[]> {
-    let res: City[] = [];
+    let res: CityModal[] = [];
     if (isOnServer()) {
-      res = await fetchServer<City[]>(ADDRESS_APIs.CITY, 'GET', {
+      res = await fetchServer<CityModal[]>(ADDRESS_APIs.CITY, 'GET', {
         noAuth: true
       });
     } else {
@@ -33,9 +33,9 @@ class AddressService {
   }
 
   async getDistricts(cityId: string | number): Promise<Option[]> {
-    let res: District[] = [];
+    let res: DistrictModal[] = [];
     if (isOnServer()) {
-      res = await fetchServer<District[]>(
+      res = await fetchServer<DistrictModal[]>(
         `${ADDRESS_APIs.CITY}/${cityId}/districts`,
         'GET',
         {
@@ -50,9 +50,9 @@ class AddressService {
   }
 
   async getWards(districtId: string | number): Promise<Option[]> {
-    let res: Ward[] = [];
+    let res: WardModal[] = [];
     if (isOnServer()) {
-      res = await fetchServer<Ward[]>(
+      res = await fetchServer<WardModal[]>(
         `${ADDRESS_APIs.DISTRICT}/${districtId}/wards`,
         'GET',
         {

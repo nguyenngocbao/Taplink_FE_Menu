@@ -3,20 +3,20 @@ import Image from 'next/image';
 import { FC, Fragment, HTMLAttributes } from 'react';
 
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
-import ThreeDot from '@/assets/icon/three-dot.svg';
+import ThreeDot from '@/assets/icon/three-dot-white.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import Drink1 from '@/assets/image/drink1.png';
-import { ItemRequest } from '@/types/item';
+import Food1 from '@/assets/image/food1.png';
+import { ItemDTO } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
-interface ImageCard2 extends HTMLAttributes<HTMLElement> {
+interface ImageCard1 extends HTMLAttributes<HTMLElement> {
   t: any;
-  data?: ItemRequest;
+  data?: ItemDTO;
   onEdit?: () => void;
   onRemove?: () => void;
 }
 
-export const ImageCard2: FC<ImageCard2> = ({
+export const ImageCard1: FC<ImageCard1> = ({
   t,
   data,
   className,
@@ -28,19 +28,17 @@ export const ImageCard2: FC<ImageCard2> = ({
   return (
     <article
       className={mergeClasses(
-        'relative flex flex-col gap-[29px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
+        'relative flex flex-col gap-[12px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
         className
       )}
       {...props}
     >
-      <div className="relative h-[142px] w-full rounded-[10px] bg-primary-bg2">
-        <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
-          {t('new')}
-        </div>
+      <div className="relative h-[106px] w-full rounded-[10px]">
         <Image
-          src={Drink1}
+          src={Food1}
           alt=""
-          className="absolute left-[50%] top-[24px] h-[147px] w-auto max-w-full translate-x-[-50%]"
+          className="rounded-[10px] object-cover object-top"
+          fill
         />
         <Menu
           as="div"
@@ -90,16 +88,19 @@ export const ImageCard2: FC<ImageCard2> = ({
             </Menu.Items>
           </Transition>
         </Menu>
+        <div className="absolute left-[12px] top-0 h-[17px] rounded-b-[6px] bg-primary px-[4px] text-[12px]/[16.8px] font-normal text-white">
+          {t('new')}
+        </div>
       </div>
 
-      <div>
+      <div className="px-[8px] text-left">
         <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-          Trà long nhãn
+          Hamburger thịt
         </p>
         <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
           Lorem Ipsum is simply dummy text
         </p>
-        <span className="flex items-center justify-center gap-[13px]">
+        <span className="flex items-center justify-between gap-[13px]">
           <span className="text-[20px]/[24px] font-bold">25.000đ</span>
           <span className="flex gap-[2px] text-[14px]/[24px] font-normal">
             <svg

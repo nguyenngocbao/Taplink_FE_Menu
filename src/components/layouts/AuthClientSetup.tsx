@@ -8,9 +8,14 @@ import axios from '@/lib/axios';
 
 export const AuthClientSetup = ({ session }: { session: Session }) => {
   // setup axios
-  const accessToken = session?.accessToken;
-  axios.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
   axios.defaults.headers['Accept'] = 'application/json';
+
+  const accessToken = session?.accessToken;
+  if (accessToken) {
+    axios.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
+  } else {
+    axios.defaults.headers['Authorization'] = undefined;
+  }
 
   useSession();
 

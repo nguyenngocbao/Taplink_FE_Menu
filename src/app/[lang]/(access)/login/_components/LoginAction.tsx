@@ -34,7 +34,7 @@ export const LoginAction = () => {
 
   const sendOTPStore = useDataApi(authService.sendOTP.bind(authService));
   const loginStore = useLogin<VerifyOtpRequest>({
-    callbackUrl: callbackUrl ?? '/mypage',
+    callbackUrl: callbackUrl ?? STORE_OWNER_ROUTE.HOME,
     successMessage: t('loginSuccess')
   });
 

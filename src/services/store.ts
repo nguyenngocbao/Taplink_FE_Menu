@@ -1,49 +1,45 @@
-import { revalidateTag } from '@/app/actions';
-import axios from '@/lib/axios';
-import fetchServer from '@/lib/fetch-server';
-import { Option } from '@/types';
+import { Option, OptionRes } from '@/types';
 import { CRUDAbstract } from '@/types/CRUD';
-import { Store, StoreResponse, StoreTypeResponse } from '@/types/store';
-import { callApi, isOnServer } from '@/utils/common';
+import { StoreDTO, StoreModal, StorePostReq, StorePutReq } from '@/types/store';
+import { callApi } from '@/utils/common';
 
 export const STORE_APIs = {
   INDEX: '/api/v1/stores'
 };
 
-class StoreCRUD extends CRUDAbstract<Store, StoreResponse> {
+class StoreCRUD extends CRUDAbstract<
+  StoreDTO,
+  StoreModal,
+  StorePostReq,
+  StorePutReq
+> {
   constructor() {
     super(STORE_APIs.INDEX);
   }
 
-  mapDTO(res: StoreResponse): Store {
+  mapDTO(res: StoreModal): StoreDTO {
     if (!res) return null;
     const dto: any = res;
     return dto;
   }
 
-  async createFormData(item: FormData, revalidate = true): Promise<Store> {
-    const res: StoreResponse = await callApi(
-      STORE_APIs.INDEX,
-      'POST',
-      item,
-      this.isMock,
-      {
-        'content-type': 'multipart/form-data'
-      }
+  async getStoreTypes(): Promise<Option[]> {
+    const res = await callApi<OptionRes[]>(
+      STORE_APIs.INDEX + '/store-type',
+      'GET'
     );
-    revalidate && revalidateTag(STORE_APIs.INDEX);
-    return this.mapDTO(res);
+
+    return res.map(type => ({
+      label: type.name,
+      value: type.id
+    }));
   }
 
-  async getStoreTypes(): Promise<Option[]> {
-    let res: StoreTypeResponse[] = null;
-
-    if (isOnServer()) {
-      res = await fetchServer(STORE_APIs.INDEX + '/store-type', 'GET');
-    } else {
-      res = await axios.get(STORE_APIs.INDEX + '/store-type');
-    }
-
+  async getStoreMenuTemplates(): Promise<Option[]> {
+    const res = await callApi<OptionRes[]>(
+      STORE_APIs.INDEX + '/menu-template',
+      'GET'
+    );
     return res.map(type => ({
       label: type.name,
       value: type.id

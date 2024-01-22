@@ -32,7 +32,8 @@ async function fetchServer<Res>(
         Accept: 'application/json',
         'Content-Type': 'application/json',
         ...(!!session &&
-          !options?.noAuth && {
+          !options?.noAuth &&
+          session?.accessToken && {
             Authorization: `Bearer ${session?.accessToken}`
           }),
         ...(options.headers && options.headers)

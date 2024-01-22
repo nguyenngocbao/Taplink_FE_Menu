@@ -1,17 +1,17 @@
-export type City = {
+export type CityModal = {
   id: number;
   name: string;
   code: string;
 };
 
-export type District = {
+export type DistrictModal = {
   id: number;
   name: string;
   code: string;
   cityId: number;
 };
 
-export type Ward = {
+export type WardModal = {
   id: number;
   name: string;
   code: string;

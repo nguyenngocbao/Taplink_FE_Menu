@@ -6,10 +6,11 @@ import { toast } from 'react-toastify';
 
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
+import { useCreate } from '@/hooks/features';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 import { Option } from '@/types';
-import { Store } from '@/types/store';
+import { StoreDTO } from '@/types/store';
 import { dataURLtoFile, getFormData } from '@/utils/common';
 
 import StoreForm from './StoreForm';
@@ -27,10 +28,7 @@ export const StoreCreation: FC<StoreCreation> = ({
   const query = useSearchParams();
   const deviceId = query.get('device_id');
 
-  const createStoreApi = useDataApi(
-    storeService.createFormData.bind(storeService)
-  );
-  const createStore = createStoreApi.call as typeof storeService.createFormData;
+  const { createItem, isCreating } = useCreate({ service: storeService });
 
   const connectDeviceApi = useDataApi(
     deviceService.connectStore.bind(deviceService)
@@ -39,17 +37,27 @@ export const StoreCreation: FC<StoreCreation> = ({
     connectDeviceApi.call as typeof deviceService.connectStore;
 
   const onSubmit = useCallback(
-    async (values: Store) => {
-      const newStore = await createStore(
+    async (values: StoreDTO) => {
+      const { image, ...data } = values;
+      const newStore = await createItem(
         getFormData({
-          ...values,
-          image: dataURLtoFile(values.image, 'image.jpg')
-        })
+          ...data,
+          ...(image && {
+            image: dataURLtoFile(image, 'image.png')
+          })
+        }),
+        false,
+        {
+          'content-type': 'multipart/form-data'
+        }
       );
-      await connectDevice({
-        uuid: deviceId,
-        storeId: newStore.id
-      });
+
+      if (deviceId) {
+        await connectDevice({
+          uuid: deviceId,
+          storeId: newStore.id
+        });
+      }
 
       toast.success('Create store successfully');
       router.push(STORE_OWNER_ROUTE.STORE + '/' + newStore.id);
@@ -61,7 +69,7 @@ export const StoreCreation: FC<StoreCreation> = ({
     <StoreForm
       storeTypes={storeTypes}
       data={null}
-      isLoading={createStoreApi.isLoading || connectDeviceApi.isLoading}
+      isLoading={isCreating || connectDeviceApi.isLoading}
       cityOptions={cityOptions}
       onSubmit={onSubmit}
     />

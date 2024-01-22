@@ -12,6 +12,16 @@ acceptLanguage.languages(languages);
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
+    // handle authen access
+    const user = await getToken({ req });
+    const userRole = user?.role ?? 'unknown';
+    const nextPathname = req.nextUrl.pathname;
+    if (!isAllowAccess(nextPathname, userRole)) {
+      return NextResponse.redirect(
+        req.nextUrl.origin + FAILLBACK_ROUTES[userRole]
+      );
+    }
+
     // handle lang redirect
     let lng;
     if (req.cookies.has(cookieName))
@@ -40,16 +50,6 @@ export default withAuth(
       const response = NextResponse.next();
       if (lngInReferer) response.cookies.set(cookieName, lngInReferer);
       return response;
-    }
-
-    // handle authen access
-    const user = await getToken({ req });
-    const userRole = user?.role ?? 'unknown';
-    const nextPathname = req.nextUrl.pathname;
-    if (!isAllowAccess(nextPathname, userRole)) {
-      return NextResponse.redirect(
-        req.nextUrl.origin + FAILLBACK_ROUTES[userRole]
-      );
     }
   },
   {

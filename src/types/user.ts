@@ -1,4 +1,4 @@
-export type SignupRequest = {
+export type SignupModal = {
   username: string;
   fullName: string;
   email: string;
