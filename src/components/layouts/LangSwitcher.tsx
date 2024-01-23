@@ -16,10 +16,10 @@ export const LangSwicher = () => {
     >
       <Menu.Button className="flex h-full w-full items-center justify-center">
         <Image
-          src={selectedLanguage.iconUrl}
+          src={selectedLanguage?.iconUrl}
           width={48}
           height={48}
-          alt={selectedLanguage.name}
+          alt={selectedLanguage?.name}
           className="h-[24px] w-[24px]"
         />
         <svg

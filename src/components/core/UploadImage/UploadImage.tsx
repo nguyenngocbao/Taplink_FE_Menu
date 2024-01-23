@@ -43,9 +43,11 @@ export const UploadImage: FC<UploadImageProps> = memo(
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
+    const [isError, setError] = useState(false);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const getImageSrc = useMemo(() => {
+      if (isError) return NoImage;
       if (isOnServer()) return NoImage;
 
       if (typeof src === 'string') {
@@ -66,8 +68,9 @@ export const UploadImage: FC<UploadImageProps> = memo(
         return URL.createObjectURL(src?.[0]);
       }
 
+      setError(false);
       return NoImage;
-    }, [src]);
+    }, [src, isError]);
 
     const onKeyDown: React.KeyboardEventHandler<HTMLImageElement> = useCallback(
       e => {
@@ -170,10 +173,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
             alt=""
             width={80}
             height={80}
-            onError={e =>
-              ((e.target as HTMLImageElement).src =
-                '/images/default-avatar.svg')
-            }
+            onError={() => setError(true)}
             className={mergeClasses(
               'h-full w-full bg-white object-contain object-top',
               className

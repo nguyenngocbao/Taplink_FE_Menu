@@ -48,3 +48,8 @@ export type StoreCategoryModal = {
 };
 
 export type StoreCategoryPostReq = StoreCategoryModal;
+
+export enum StoreType {
+  FoodAndDrink = 1,
+  Spa = 2
+}

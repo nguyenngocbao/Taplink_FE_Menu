@@ -1,7 +1,5 @@
-import { ID } from './CRUD';
-
 export type ItemModal = {
-  id: ID;
+  id: number;
   name: string;
   image: string;
   description: string;
@@ -12,7 +10,7 @@ export type ItemModal = {
 };
 
 export type ItemDTO = {
-  id?: ID;
+  id?: number;
   image: string;
   categoryId: string;
   description: string;

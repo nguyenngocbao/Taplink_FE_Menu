@@ -38,13 +38,13 @@ const ItemForm: FC<UserAddProps> = memo(
     const isAdd = data === null;
     const { t } = useTranslation(['myPage', 'common']);
 
+    console.log(data);
+
     const schema = useMemo(
       () =>
         z.object({
           name: z.string().min(1, t('message.fieldRequired', { ns: 'common' })),
-          priceTypeId: z
-            .string()
-            .min(1, t('message.fieldRequired', { ns: 'common' })),
+          priceTypeId: z.any(),
           categoryId: z
             .string()
             .min(1, t('message.fieldRequired', { ns: 'common' })),
@@ -58,7 +58,10 @@ const ItemForm: FC<UserAddProps> = memo(
 
     return data !== undefined ? (
       <div>
-        <Form<ItemDTO, typeof schema> onSubmit={onSubmit} schema={schema}>
+        <Form<ItemDTO, typeof schema>
+          onSubmit={d => onSubmit({ ...data, ...d })}
+          schema={schema}
+        >
           {({ register, control, formState, watch }) => {
             const priceType = Number(watch('priceTypeId'));
             const priceRender = (() => {
@@ -141,6 +144,7 @@ const ItemForm: FC<UserAddProps> = memo(
               <>
                 <Controller
                   name="image"
+                  defaultValue={data.image}
                   control={control}
                   render={({ field: { onChange, value } }) => {
                     return (

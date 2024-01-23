@@ -5,10 +5,9 @@ import { FC, Fragment, HTMLAttributes } from 'react';
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import Drink1 from '@/assets/image/drink1.png';
+import NoImage from '@/assets/image/no-image.svg';
 import { ItemDTO } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
-
 interface ImageCard2 extends HTMLAttributes<HTMLElement> {
   t: any;
   data?: ItemDTO;
@@ -37,7 +36,7 @@ export const ImageCard2: FC<ImageCard2> = ({
           {t('new')}
         </div>
         <Image
-          src={data?.image || Drink1}
+          src={data?.image || NoImage}
           alt=""
           width={200}
           height={147}

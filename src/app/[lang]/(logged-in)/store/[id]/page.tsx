@@ -10,10 +10,11 @@ import { categoryService } from '@/services/category';
 import { itemService } from '@/services/item';
 import { storeService } from '@/services/store';
 import { Option } from '@/types';
+import { StoreType } from '@/types/store';
 
 import { CategoryCreation } from './_components/CategoryCreation';
 import { BasicLayout } from './_components/layouts/Basic';
-// import { GroupLayout } from './_components/layouts/Group';
+import { GroupLayout } from './_components/layouts/Group';
 
 export default async function ({ params: { lang, id } }) {
   const { t } = await useTranslation(lang, 'myPage');
@@ -24,6 +25,8 @@ export default async function ({ params: { lang, id } }) {
     label: cate.name,
     value: cate.id
   }));
+
+  console.log(store);
 
   return (
     <main className="relative items-center p-[16px] text-center">
@@ -77,13 +80,16 @@ export default async function ({ params: { lang, id } }) {
           </span>
           <CategoryCreation storeId={id} />
         </div>
-        <BasicLayout
-          menuTemplates={MENU_TEMPLATES}
-          categories={categories}
-          store={store}
-          priceTypes={priceTypeRes}
-        />
-        {/* <GroupLayout /> */}
+        {store?.storeTypeId === StoreType.FoodAndDrink && (
+          <BasicLayout
+            menuTemplates={MENU_TEMPLATES}
+            categories={categories}
+            store={store}
+            priceTypes={priceTypeRes}
+          />
+        )}
+
+        {store.storeTypeId === StoreType.Spa && <GroupLayout />}
       </>
     </main>
   );

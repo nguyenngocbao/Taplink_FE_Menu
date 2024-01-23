@@ -7,21 +7,17 @@ import { toast } from 'react-toastify';
 
 import { useTranslation } from '@/app/i18n/client';
 import PlusWhite from '@/assets/icon/plus-white.svg';
-import { Chip, Dialog, SelectField } from '@/components/core';
+import { Chip, Dialog, SelectField, Spinner } from '@/components/core';
 import { MenuTemplate } from '@/constants/template';
 import { useDisclosure } from '@/hooks';
-import { useCreate, useRead, useUpdate } from '@/hooks/features';
+import { useUpdate } from '@/hooks/features';
+import { useItem } from '@/hooks/features/use-item';
 import { categoryService } from '@/services/category';
-import { itemService } from '@/services/item';
 import { Option } from '@/types';
 import { ID } from '@/types/CRUD';
 import { ItemDTO } from '@/types/item';
 import { StoreDTO } from '@/types/store';
-import {
-  dataURLtoFile,
-  getFormData,
-  updateUrlWithParams
-} from '@/utils/common';
+import { updateUrlWithParams } from '@/utils/common';
 
 import { ImageCard2 } from '../Cards/ImageCard2';
 import { TextCard2 } from '../Cards/TextCard1';
@@ -42,30 +38,31 @@ export const BasicLayout: FC<BasicLayout> = ({
 }) => {
   const query = useSearchParams();
   const { t } = useTranslation('myPage');
-  const [selectedChipId, setSelectedChipId] = useState(categories[0]?.value);
+  const [selectedCate, setSelectedCate] = useState(categories[0]?.value);
+  const [selectedItem, setSelectedItem] = useState(null);
   const { isOpen, open, close } = useDisclosure();
-  const [menuTemplateId, setMenuTemplateId] = useState<number>(
+  const [selectedTemplate, setSelectedTemplate] = useState<number>(
     store.menuTemplateId ?? MenuTemplate.Image
   );
-  const categoryId = query.get('categoryId') ?? selectedChipId;
+  const categoryId = Number(query.get('categoryId') ?? selectedCate);
 
-  const { createItem, isCreating } = useCreate({ service: itemService });
+  const {
+    items,
+    addItem,
+    getListItem,
+    removeItem,
+    editItem,
+    isUpdating,
+    isDeleting,
+    isCreating,
+    isLoading
+  } = useItem(categoryId, t);
+
   const { updateItem } = useUpdate({ service: categoryService });
-  const { data, isLoading, getList } = useRead({
-    service: itemService,
-    useQueryParams: false,
-    initialParams: {
-      categoryId: String(categoryId)
-    },
-    enable: !!categoryId
-  });
-
-  console.log(data);
-  const items = data?.content ?? [];
 
   const onChangeMenuTemplate = id => {
-    setMenuTemplateId(Number(id));
-    const selectedCategory = categories.find(c => c.value === selectedChipId);
+    setSelectedTemplate(Number(id));
+    const selectedCategory = categories.find(c => c.value === selectedCategory);
 
     updateItem(
       {
@@ -77,34 +74,9 @@ export const BasicLayout: FC<BasicLayout> = ({
     );
   };
 
-  const onAddItem = async (values: ItemDTO) => {
-    const { image, ...data } = values;
-    try {
-      await createItem(
-        getFormData({
-          ...data,
-          ...(image && {
-            image: dataURLtoFile(image, 'image.jpg')
-          }),
-          priceInfo: JSON.stringify(values.priceInfo)
-        }),
-        true,
-        {
-          'content-type': 'multipart/form-data'
-        }
-      );
-      toast.success(t('createItemSuccess'));
-      await getList({ categoryId: selectedChipId });
-      close();
-    } catch (e) {
-      console.log(e);
-      // toast.error(t('createItemFail'));
-    }
-  };
-
   const itemsRender = useMemo(() => {
     let ItemComponent = null;
-    switch (menuTemplateId) {
+    switch (selectedTemplate) {
       case MenuTemplate.NoImage:
         ItemComponent = TextCard2;
         break;
@@ -119,11 +91,20 @@ export const BasicLayout: FC<BasicLayout> = ({
             key={item.id}
             t={t}
             className="w-[calc(50%_-_8px)]"
+            onEdit={() => {
+              setSelectedItem(item);
+              open();
+            }}
+            onRemove={async () => {
+              //TODO: show confirm
+              await removeItem(item.id);
+              getListItem({ categoryId: categoryId });
+            }}
           />
         ))}
       </div>
     );
-  }, [menuTemplateId, items]);
+  }, [selectedTemplate, items]);
 
   return (
     <>
@@ -133,11 +114,11 @@ export const BasicLayout: FC<BasicLayout> = ({
             return (
               <Chip
                 onClick={() => {
-                  setSelectedChipId(cate.value);
+                  setSelectedCate(cate.value);
                   updateUrlWithParams({ categoryId: cate.value });
-                  getList({ categoryId: cate.value });
+                  getListItem({ categoryId: cate.value });
                 }}
-                isActive={selectedChipId === cate.value}
+                isActive={selectedCate === cate.value}
                 key={String(cate.value)}
               >
                 {cate.label}
@@ -149,7 +130,7 @@ export const BasicLayout: FC<BasicLayout> = ({
         <SelectField
           onChange={onChangeMenuTemplate}
           options={menuTemplates}
-          value={String(menuTemplateId)}
+          value={String(selectedTemplate)}
           label={t('menuTemplate')}
         ></SelectField>
 
@@ -158,9 +139,18 @@ export const BasicLayout: FC<BasicLayout> = ({
         <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
           <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
             <ItemForm
-              onSubmit={onAddItem}
-              data={null}
-              isLoading={isCreating || isLoading}
+              onSubmit={async (newItem: ItemDTO) => {
+                try {
+                  const action = selectedItem ? editItem : addItem;
+                  await action(newItem);
+                  getListItem({ categoryId: categoryId });
+                  close();
+                } catch (e) {
+                  console.log(e);
+                }
+              }}
+              data={selectedItem}
+              isLoading={isCreating || isLoading || isUpdating}
               categories={categories}
               priceTypes={priceTypes}
             />
@@ -173,12 +163,14 @@ export const BasicLayout: FC<BasicLayout> = ({
             toast.info(t('noCategories'));
             return;
           }
+          setSelectedItem(null);
           open();
         }}
         className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
       >
         <Image src={PlusWhite} alt="" />
       </button>
+      {isDeleting && <Spinner isCenter />}
     </>
   );
 };

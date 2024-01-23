@@ -27,5 +27,9 @@
   "updateItem": "Cập nhật sản phẩm",
   "createItemSuccess": "Tạo sản phẩm thành công!",
   "createItemFail": "Tạo sản phẩm thất bại",
+  "updateItemSuccess": "Cập nhật sản phẩm thành công!",
+  "updateItemFail": "Cập nhật sản phẩm thất bại",
+  "deleteItemSuccess": "Xóa sản phẩm thành công!",
+  "deleteItemFail": "Xóa sản phẩm thất bại",
   "noCategories": "Vui lòng thêm ít nhất một thể loại trước khi thêm sản phẩm mới."
 }
