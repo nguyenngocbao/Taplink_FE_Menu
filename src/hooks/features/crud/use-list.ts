@@ -17,14 +17,14 @@ interface useGetListProps<
   UpdateReqPayload = CreateReqPayload
 > extends useCRUDServiceProps<DTO, Modal, CreateReqPayload, UpdateReqPayload> {
   useQueryParams?: boolean;
-  initialParams: Record<string, string> & {
+  initialParams: Record<string, unknown> & {
     limit?: number;
     sort?: Partial<Record<keyof Modal, SortOrder>>;
   };
   enable?: boolean;
 }
 
-export const useRead = <
+export const useList = <
   SearchParams extends Modal & PaginationSearchParams,
   DTO extends { id?: ID },
   Modal = DTO,

@@ -21,6 +21,7 @@ export type StoreDTO = {
   storeTemplateId: number;
   menuTemplateId: number;
   phone?: string;
+  storeOwnerId: number;
 };
 
 export type StoreModal = {

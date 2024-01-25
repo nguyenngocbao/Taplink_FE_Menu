@@ -15,6 +15,7 @@ import {
 } from '@/components/core';
 import { PRICE_SIZE_TYPES } from '@/constants/item';
 import { Option } from '@/types';
+import { CategoryDTO } from '@/types/category';
 import { ItemDTO, PriceType } from '@/types/item';
 
 interface UserAddProps {
@@ -22,7 +23,7 @@ interface UserAddProps {
   isLoading?: boolean;
   isEditable?: boolean;
   onSubmit?: (values: ItemDTO) => void;
-  categories: Option[];
+  categories: CategoryDTO[];
   priceTypes: Option[];
 }
 
@@ -169,7 +170,10 @@ const ItemForm: FC<UserAddProps> = memo(
                 />
 
                 <SelectField
-                  options={categories}
+                  options={categories.map(c => ({
+                    label: c.name,
+                    value: c.id
+                  }))}
                   label={t('itemType')}
                   error={formState.errors['categoryId']}
                   disabled={!isEditable}

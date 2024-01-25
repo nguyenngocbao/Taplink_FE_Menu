@@ -1,7 +1,7 @@
 import { addressService } from '@/services/address';
 import { storeService } from '@/services/store';
 
-import { StoreCreation } from './_components';
+import { StoreAdd } from './_components/StoreAdd';
 
 export const metadata = {
   title: 'Store creation',
@@ -14,7 +14,7 @@ export default async function () {
 
   return (
     <main className="px-[16px] py-[29px]">
-      <StoreCreation cityOptions={cityOptions} storeTypes={storeTypes} />
+      <StoreAdd cityOptions={cityOptions} storeTypes={storeTypes} />
     </main>
   );
 }

@@ -8,43 +8,50 @@ import { toast } from 'react-toastify';
 import { useTranslation } from '@/app/i18n/client';
 import PlusWhite from '@/assets/icon/plus-white.svg';
 import { Chip, Dialog, SelectField, Spinner } from '@/components/core';
+import {
+  ImageCard2,
+  ImageCard2Skeleton,
+  TextCard2,
+  TextCard2Skeleton
+} from '@/components/features';
 import { MenuTemplate } from '@/constants/template';
 import { useDisclosure } from '@/hooks';
 import { useUpdate } from '@/hooks/features';
 import { useItem } from '@/hooks/features/use-item';
 import { categoryService } from '@/services/category';
 import { Option } from '@/types';
-import { ID } from '@/types/CRUD';
+import { CategoryDTO } from '@/types/category';
 import { ItemDTO } from '@/types/item';
 import { StoreDTO } from '@/types/store';
 import { updateUrlWithParams } from '@/utils/common';
 
-import { ImageCard2 } from '../Cards/ImageCard2';
-import { TextCard2 } from '../Cards/TextCard1';
 import ItemForm from '../ItemForm';
 
 interface BasicLayout {
-  categories: Option[];
+  categories: CategoryDTO[];
   menuTemplates: Option[];
   store: StoreDTO;
   priceTypes: Option[];
+  isOwner?: boolean;
 }
 
 export const BasicLayout: FC<BasicLayout> = ({
   store,
   categories,
   menuTemplates,
-  priceTypes
+  priceTypes,
+  isOwner
 }) => {
   const query = useSearchParams();
   const { t } = useTranslation('myPage');
-  const [selectedCate, setSelectedCate] = useState(categories[0]?.value);
   const [selectedItem, setSelectedItem] = useState(null);
   const { isOpen, open, close } = useDisclosure();
+  const categoryId = Number(query.get('categoryId') ?? categories[0]?.id);
+  const selectedCate = categories.find(c => c.id === categoryId);
+
   const [selectedTemplate, setSelectedTemplate] = useState<number>(
-    store.menuTemplateId ?? MenuTemplate.Image
+    selectedCate.templateId ?? MenuTemplate.Image
   );
-  const categoryId = Number(query.get('categoryId') ?? selectedCate);
 
   const {
     items,
@@ -55,34 +62,49 @@ export const BasicLayout: FC<BasicLayout> = ({
     isUpdating,
     isDeleting,
     isCreating,
-    isLoading
+    isLoading,
+    isInitialLoading
   } = useItem(categoryId, t);
 
   const { updateItem } = useUpdate({ service: categoryService });
 
   const onChangeMenuTemplate = id => {
     setSelectedTemplate(Number(id));
-    const selectedCategory = categories.find(c => c.value === selectedCategory);
 
     updateItem(
       {
         storeId: store.id,
-        name: selectedCategory.label,
+        name: selectedCate.name,
         templateId: Number(id)
       },
-      selectedCategory.value as ID
+      selectedCate.id
     );
   };
 
   const itemsRender = useMemo(() => {
     let ItemComponent = null;
+    let ItemSkeleton = null;
     switch (selectedTemplate) {
       case MenuTemplate.NoImage:
         ItemComponent = TextCard2;
+        ItemSkeleton = TextCard2Skeleton;
         break;
       default:
         ItemComponent = ImageCard2;
+        ItemSkeleton = ImageCard2Skeleton;
     }
+
+    if (isInitialLoading) {
+      return (
+        <div className="flex flex-wrap gap-x-[16px] gap-y-[27px]">
+          <ItemSkeleton className="w-[calc(50%_-_8px)]" />
+          <ItemSkeleton className="w-[calc(50%_-_8px)]" />
+          <ItemSkeleton className="w-[calc(50%_-_8px)]" />
+          <ItemSkeleton className="w-[calc(50%_-_8px)]" />
+        </div>
+      );
+    }
+
     return (
       <div className="flex flex-wrap gap-x-[16px] gap-y-[27px]">
         {items.map(item => (
@@ -90,6 +112,7 @@ export const BasicLayout: FC<BasicLayout> = ({
             data={item}
             key={item.id}
             t={t}
+            readOnly={!isOwner}
             className="w-[calc(50%_-_8px)]"
             onEdit={() => {
               setSelectedItem(item);
@@ -114,63 +137,68 @@ export const BasicLayout: FC<BasicLayout> = ({
             return (
               <Chip
                 onClick={() => {
-                  setSelectedCate(cate.value);
-                  updateUrlWithParams({ categoryId: cate.value });
-                  getListItem({ categoryId: cate.value });
+                  updateUrlWithParams({ categoryId: cate.id });
+                  getListItem({ categoryId: cate.id });
                 }}
-                isActive={selectedCate === cate.value}
-                key={String(cate.value)}
+                isActive={categoryId === cate.id}
+                key={String(cate.id)}
               >
-                {cate.label}
+                {cate.name}
               </Chip>
             );
           })}
         </div>
 
-        <SelectField
-          onChange={onChangeMenuTemplate}
-          options={menuTemplates}
-          value={String(selectedTemplate)}
-          label={t('menuTemplate')}
-        ></SelectField>
+        {isOwner && (
+          <SelectField
+            onChange={onChangeMenuTemplate}
+            options={menuTemplates}
+            value={String(selectedTemplate)}
+            label={t('menuTemplate')}
+          ></SelectField>
+        )}
 
         {itemsRender}
 
-        <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
-          <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
-            <ItemForm
-              onSubmit={async (newItem: ItemDTO) => {
-                try {
-                  const action = selectedItem ? editItem : addItem;
-                  await action(newItem);
-                  getListItem({ categoryId: categoryId });
-                  close();
-                } catch (e) {
-                  console.log(e);
+        {isOwner && (
+          <>
+            <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
+              <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
+                <ItemForm
+                  onSubmit={async (newItem: ItemDTO) => {
+                    try {
+                      const action = selectedItem ? editItem : addItem;
+                      await action(newItem);
+                      getListItem({ categoryId: categoryId });
+                      close();
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
+                  data={selectedItem}
+                  isLoading={isCreating || isLoading || isUpdating}
+                  categories={categories}
+                  priceTypes={priceTypes}
+                />
+              </div>
+            </Dialog>
+            <button
+              onClick={() => {
+                if (!categories.length) {
+                  toast.info(t('noCategories'));
+                  return;
                 }
+                setSelectedItem(null);
+                open();
               }}
-              data={selectedItem}
-              isLoading={isCreating || isLoading || isUpdating}
-              categories={categories}
-              priceTypes={priceTypes}
-            />
-          </div>
-        </Dialog>
+              className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
+            >
+              <Image src={PlusWhite} alt="" />
+            </button>
+            {isDeleting && <Spinner isCenter />}
+          </>
+        )}
       </div>
-      <button
-        onClick={() => {
-          if (!categories.length) {
-            toast.info(t('noCategories'));
-            return;
-          }
-          setSelectedItem(null);
-          open();
-        }}
-        className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
-      >
-        <Image src={PlusWhite} alt="" />
-      </button>
-      {isDeleting && <Spinner isCenter />}
     </>
   );
 };

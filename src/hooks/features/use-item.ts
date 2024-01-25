@@ -4,13 +4,13 @@ import { itemService } from '@/services/item';
 import { ItemDTO } from '@/types/item';
 import { dataURLtoFile, getFormData } from '@/utils/common';
 
-import { useCreate, useDelete, useRead, useUpdate } from './crud';
+import { useCreate, useDelete, useList, useUpdate } from './crud';
 
 export const useItem = (categoryId: number, t) => {
   const { createItem, isCreating } = useCreate({ service: itemService });
   const { deleteItem, isDeleting } = useDelete({ service: itemService });
   const { updateItem, isUpdating } = useUpdate({ service: itemService });
-  const { data, isLoading, getList } = useRead({
+  const { data, isInitialLoading, isLoading, getList } = useList({
     service: itemService,
     useQueryParams: false,
     initialParams: {
@@ -77,6 +77,7 @@ export const useItem = (categoryId: number, t) => {
   };
 
   return {
+    isInitialLoading,
     isLoading,
     isCreating,
     isDeleting,

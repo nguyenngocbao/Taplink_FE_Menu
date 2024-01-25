@@ -13,17 +13,14 @@ import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
 import { dataURLtoFile, getFormData } from '@/utils/common';
 
-import StoreForm from './StoreForm';
+import StoreForm from '../../[id]/_components/StoreForm';
 
-interface StoreCreation {
+interface StoreAdd {
   cityOptions: Option[];
   storeTypes: Option[];
 }
 
-export const StoreCreation: FC<StoreCreation> = ({
-  cityOptions,
-  storeTypes
-}) => {
+export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
   const router = useRouter();
   const query = useSearchParams();
   const deviceId = query.get('device_id');

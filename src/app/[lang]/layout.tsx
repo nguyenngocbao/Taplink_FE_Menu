@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
 import { WrappedToast } from '@/components/core/Toast';
-import { AuthProvider } from '@/components/features/login/AuthProvider';
+import { AuthProvider } from '@/components/features/auth/AuthProvider';
 import { AuthClientSetup } from '@/components/layouts/AuthClientSetup';
 import { Header } from '@/components/layouts/Header';
 import { ProgressBar } from '@/components/layouts/ProgressBar';

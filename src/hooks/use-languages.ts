@@ -15,7 +15,7 @@ export const useLanguages = (): useLanguagesReturnedData => {
   const { i18n } = useTranslation('common');
 
   const selectedLanguage =
-    languageInfo.find(l => l.id === i18n.language) || null;
+    languageInfo.find(l => l.id === i18n.language) ?? languageInfo[0];
   axios.defaults.headers['Accept-Language'] = selectedLanguage?.id;
 
   const router = useRouter();

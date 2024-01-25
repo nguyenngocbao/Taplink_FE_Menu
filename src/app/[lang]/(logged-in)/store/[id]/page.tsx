@@ -1,15 +1,17 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { useTranslation } from '@/app/i18n';
 import MarkerBlack from '@/assets/icon/marker-black.svg';
 import PencilWhite from '@/assets/icon/pencil-white.svg';
 import PhoneBlack from '@/assets/icon/phone-black.svg';
 import NoImage from '@/assets/image/no-image.svg';
+import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { MENU_TEMPLATES } from '@/constants/template';
+import { getCurrentUser } from '@/lib/auth';
 import { categoryService } from '@/services/category';
 import { itemService } from '@/services/item';
 import { storeService } from '@/services/store';
-import { Option } from '@/types';
 import { StoreType } from '@/types/store';
 
 import { CategoryCreation } from './_components/CategoryCreation';
@@ -19,14 +21,10 @@ import { GroupLayout } from './_components/layouts/Group';
 export default async function ({ params: { lang, id } }) {
   const { t } = await useTranslation(lang, 'myPage');
   const store = await storeService.get(id);
-  const categoryRes = await categoryService.list({ storeId: id });
+  const categories = await categoryService.list({ storeId: id });
   const priceTypeRes = await itemService.getPriceTypes();
-  const categories: Option[] = categoryRes.content.map(cate => ({
-    label: cate.name,
-    value: cate.id
-  }));
-
-  console.log(store);
+  const user = await getCurrentUser();
+  const isOwner = user && user?.id === store?.storeOwnerId;
 
   return (
     <main className="relative items-center p-[16px] text-center">
@@ -42,9 +40,11 @@ export default async function ({ params: { lang, id } }) {
       <>
         <div className="mb-[16px] flex items-center justify-between">
           <p className="text-white">{t('shopInfo')}</p>
-          <button>
-            <Image src={PencilWhite} alt="" />
-          </button>
+          {user && (
+            <Link href={`${STORE_OWNER_ROUTE.STORE}/${id}/edit`}>
+              <Image src={PencilWhite} alt="" />
+            </Link>
+          )}
         </div>
         <div className="relative mb-[38px] flex h-[215px] w-full flex-col justify-end overflow-hidden rounded-[10px] px-[12px] py-[18px] text-left">
           <Image
@@ -78,18 +78,24 @@ export default async function ({ params: { lang, id } }) {
           <span className="text-[20px]/[24px] font-bold text-[#000]">
             {t('category')}
           </span>
-          <CategoryCreation storeId={id} />
+          {isOwner && <CategoryCreation storeId={id} />}
         </div>
         {store?.storeTypeId === StoreType.FoodAndDrink && (
           <BasicLayout
             menuTemplates={MENU_TEMPLATES}
-            categories={categories}
+            categories={categories.content ?? []}
             store={store}
             priceTypes={priceTypeRes}
+            isOwner={isOwner}
           />
         )}
 
-        {store.storeTypeId === StoreType.Spa && <GroupLayout />}
+        {store.storeTypeId === StoreType.Spa && (
+          <GroupLayout
+            isOwner={user.id === store.storeTemplateId}
+            categories={categories.content ?? []}
+          />
+        )}
       </>
     </main>
   );
