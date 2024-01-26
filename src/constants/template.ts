@@ -1,14 +1,19 @@
 import { Option } from '@/types';
 
 export enum MenuTemplate {
-  Image,
+  DrinkImage,
+  FoodImage,
   NoImage
 }
 
 export const MENU_TEMPLATES: Option[] = [
   {
-    label: 'Image',
-    value: MenuTemplate.Image
+    label: 'Drink Image',
+    value: MenuTemplate.DrinkImage
+  },
+  {
+    label: 'Food Image',
+    value: MenuTemplate.FoodImage
   },
   {
     label: 'No Image',

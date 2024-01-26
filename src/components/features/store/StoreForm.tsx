@@ -26,7 +26,7 @@ interface StoreFormProps {
   cityOptions: Option[];
 }
 
-const StoreForm: FC<StoreFormProps> = memo(
+export const StoreForm: FC<StoreFormProps> = memo(
   ({
     isLoading,
     isEditable = true,
@@ -213,5 +213,3 @@ const StoreForm: FC<StoreFormProps> = memo(
     );
   }
 );
-
-export default StoreForm;

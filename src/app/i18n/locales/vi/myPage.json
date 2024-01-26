@@ -12,6 +12,7 @@
   "edit": "Chỉnh sửa",
   "delete": "Xoá",
   "uploadImageDesc": "Thiết lập thông tin hình ảnh đại diện cho sản phẩm",
+  "uploadImageCateDesc": "Thiết lập thông tin hình ảnh đại diện cho thể loại",
   "itemName": "Tên sản phẩm",
   "itemNamePlaceholder": "Nhập tên sản phẩm",
   "itemType": "Thể loại sản phẩm",
@@ -28,8 +29,11 @@
   "createItemSuccess": "Tạo sản phẩm thành công!",
   "createItemFail": "Tạo sản phẩm thất bại",
   "updateItemSuccess": "Cập nhật sản phẩm thành công!",
+  "updateCateSuccess": "Cập nhật thể loại thành công!",
   "updateItemFail": "Cập nhật sản phẩm thất bại",
   "deleteItemSuccess": "Xóa sản phẩm thành công!",
   "deleteItemFail": "Xóa sản phẩm thất bại",
+  "createCateSuccess": "Tạo thể loại thành công!",
+  "deleteCateSuccess": "Xóa thể loại thành công!",
   "noCategories": "Vui lòng thêm ít nhất một thể loại trước khi thêm sản phẩm mới."
 }

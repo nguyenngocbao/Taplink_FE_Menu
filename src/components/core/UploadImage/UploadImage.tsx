@@ -35,7 +35,7 @@ interface UploadImageProps
 }
 
 export const UploadImage: FC<UploadImageProps> = memo(
-  ({ src, className, disabled, onChange, aspect = 343 / 210, ...props }) => {
+  ({ src, className, disabled, onChange, aspect, ...props }) => {
     const { t } = useTranslation('common');
     const labelRef = useRef<HTMLLabelElement>(null);
     const [tempImage, setTempImage] = useState<string>(null);
@@ -133,7 +133,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
     };
 
     return (
-      <>
+      <div>
         <div className="mb-[16px] flex items-center gap-[16px] font-normal">
           <label ref={labelRef}>
             <div
@@ -222,7 +222,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
             <Button onClick={onSubmit}>{t('label.crop')}</Button>
           </div>
         </Dialog>
-      </>
+      </div>
     );
   }
 );

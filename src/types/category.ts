@@ -1,26 +1,27 @@
-import { ID } from './CRUD';
-
 export type CategoryModal = {
-  id: ID;
-  storeId: ID;
+  id: number;
+  storeId: number;
   name: string;
   description: string;
   templateId: number;
+  image?: string;
 };
 
 export type CategoryDTO = {
-  id: ID;
-  storeId: ID;
+  id: number;
+  storeId: number;
   name: string;
   description: string;
   templateId: number;
+  image?: string;
 };
 
 export type CategoryPostReq = {
-  storeId: ID;
+  storeId: number;
   name: string;
   description?: string;
-  templateId: number;
+  templateId?: number;
+  image?: File;
 };
 
 export type CategoryPutReq = CategoryPostReq;

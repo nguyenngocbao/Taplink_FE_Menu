@@ -25,21 +25,21 @@ interface UserAddProps {
   onSubmit?: (values: ItemDTO) => void;
   categories: CategoryDTO[];
   priceTypes: Option[];
+  imageAspect?: number;
 }
 
-const ItemForm: FC<UserAddProps> = memo(
+export const ItemForm: FC<UserAddProps> = memo(
   ({
     data,
     isLoading,
     isEditable = true,
     categories,
     priceTypes,
+    imageAspect,
     onSubmit
   }) => {
     const isAdd = data === null;
     const { t } = useTranslation(['myPage', 'common']);
-
-    console.log(data);
 
     const schema = useMemo(
       () =>
@@ -143,22 +143,24 @@ const ItemForm: FC<UserAddProps> = memo(
 
             return (
               <>
-                <Controller
-                  name="image"
-                  defaultValue={data.image}
-                  control={control}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <UploadImage
-                        disabled={!isEditable}
-                        placeholder={t('uploadImageDesc')}
-                        src={value}
-                        onChange={onChange}
-                        aspect={152 / 294}
-                      />
-                    );
-                  }}
-                />
+                {imageAspect && (
+                  <Controller
+                    name="image"
+                    defaultValue={data?.image}
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <UploadImage
+                          disabled={!isEditable}
+                          placeholder={t('uploadImageDesc')}
+                          src={value}
+                          onChange={onChange}
+                          aspect={imageAspect}
+                        />
+                      );
+                    }}
+                  />
+                )}
 
                 <InputField
                   aria-label="name"
@@ -227,5 +229,3 @@ const ItemForm: FC<UserAddProps> = memo(
     );
   }
 );
-
-export default ItemForm;

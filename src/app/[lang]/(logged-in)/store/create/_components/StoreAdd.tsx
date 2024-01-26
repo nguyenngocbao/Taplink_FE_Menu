@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
+import { StoreForm } from '@/components/features';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
 import { useCreate } from '@/hooks/features';
@@ -12,8 +13,6 @@ import { storeService } from '@/services/store';
 import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
 import { dataURLtoFile, getFormData } from '@/utils/common';
-
-import StoreForm from '../../[id]/_components/StoreForm';
 
 interface StoreAdd {
   cityOptions: Option[];

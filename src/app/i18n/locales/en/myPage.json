@@ -12,6 +12,7 @@
   "edit": "Edit",
   "delete": "Delete",
   "uploadImageDesc": "Set up profile information for the product",
+  "uploadImageCateDesc": "Set up profile information for the category",
   "itemName": "Item name",
   "itemNamePlaceholder": "Enter item name",
   "itemType": "Product type",
@@ -31,5 +32,8 @@
   "updateItemFail": "Update item fail",
   "deleteItemSuccess": "Delete item successfully!",
   "deleteItemFail": "Delete item fail",
+  "updateCateSuccess": "Update category successfully!",
+  "createCateSuccess": "Create category successfully!",
+  "deleteCateSuccess": "Delete category successfully!",
   "noCategories": "Please add at least one category before adding a new item."
 }

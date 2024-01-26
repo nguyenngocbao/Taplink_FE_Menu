@@ -5,13 +5,13 @@ import { FC, Fragment, HTMLAttributes } from 'react';
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import Spa from '@/assets/image/spa.png';
-import { ItemDTO } from '@/types/item';
+import NoImage from '@/assets/image/no-image.svg';
+import { CategoryDTO } from '@/types/category';
 import { mergeClasses } from '@/utils/common';
 
 interface GroupImageCard extends HTMLAttributes<HTMLElement> {
   t: any;
-  data?: ItemDTO;
+  data?: CategoryDTO;
   onEdit?: () => void;
   onRemove?: () => void;
 }
@@ -24,7 +24,6 @@ export const GroupImageCard: FC<GroupImageCard> = ({
   onRemove,
   ...props
 }) => {
-  console.log(data);
   return (
     <article
       className={mergeClasses(
@@ -35,7 +34,7 @@ export const GroupImageCard: FC<GroupImageCard> = ({
     >
       <div className="relative h-[195px] w-full rounded-[10px]">
         <Image
-          src={Spa}
+          src={data?.image || NoImage}
           alt=""
           className="rounded-[10px] object-cover object-top"
           fill
@@ -92,12 +91,21 @@ export const GroupImageCard: FC<GroupImageCard> = ({
 
       <div className="px-[8px] text-left">
         <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-          Chăm sóc da
+          {data?.name}
         </p>
-        <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
-          Lorem Ipsum is simply dummy text of the printing
+        <p className="mb-[4px] break-words text-[12px]/[16.8px] font-normal text-[#000]">
+          {data.description}
         </p>
       </div>
     </article>
+  );
+};
+
+export const GroupImageCardSkeleton = ({ className, ...props }) => {
+  return (
+    <article
+      className={mergeClasses('loading h-[303px] rounded-[10px]', className)}
+      {...props}
+    ></article>
   );
 };

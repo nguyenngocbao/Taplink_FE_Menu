@@ -1,5 +1,3 @@
-import { ID } from './CRUD';
-
 export type StoreAddress = {
   nation: string;
   city: string;
@@ -9,7 +7,7 @@ export type StoreAddress = {
 };
 
 export type StoreDTO = {
-  id?: ID;
+  id?: number;
   name: string;
   storeTypeId: number | string;
   image: string;
@@ -25,7 +23,7 @@ export type StoreDTO = {
 };
 
 export type StoreModal = {
-  id: ID;
+  id: number;
   name: string;
   wifiPass: string;
   storeTemplateId: number;
@@ -38,17 +36,6 @@ export type StoreModal = {
 export type StorePostReq = FormData;
 
 export type StorePutReq = FormData;
-
-export type StoreCategoryModal = {
-  id?: string;
-  storeId: number;
-  templateId: number;
-  description: string;
-  name: string;
-  image: string;
-};
-
-export type StoreCategoryPostReq = StoreCategoryModal;
 
 export enum StoreType {
   FoodAndDrink = 1,

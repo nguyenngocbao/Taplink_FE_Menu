@@ -9,8 +9,11 @@ import { useTranslation } from '@/app/i18n/client';
 import PlusWhite from '@/assets/icon/plus-white.svg';
 import { Chip, Dialog, SelectField, Spinner } from '@/components/core';
 import {
+  ImageCard1,
+  ImageCard1Skeleton,
   ImageCard2,
   ImageCard2Skeleton,
+  ItemForm,
   TextCard2,
   TextCard2Skeleton
 } from '@/components/features';
@@ -24,8 +27,6 @@ import { CategoryDTO } from '@/types/category';
 import { ItemDTO } from '@/types/item';
 import { StoreDTO } from '@/types/store';
 import { updateUrlWithParams } from '@/utils/common';
-
-import ItemForm from '../ItemForm';
 
 interface BasicLayout {
   categories: CategoryDTO[];
@@ -50,7 +51,7 @@ export const BasicLayout: FC<BasicLayout> = ({
   const selectedCate = categories.find(c => c.id === categoryId);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(
-    selectedCate.templateId ?? MenuTemplate.Image
+    selectedCate.templateId ?? MenuTemplate.DrinkImage
   );
 
   const {
@@ -88,6 +89,10 @@ export const BasicLayout: FC<BasicLayout> = ({
       case MenuTemplate.NoImage:
         ItemComponent = TextCard2;
         ItemSkeleton = TextCard2Skeleton;
+        break;
+      case MenuTemplate.FoodImage:
+        ItemComponent = ImageCard1;
+        ItemSkeleton = ImageCard1Skeleton;
         break;
       default:
         ItemComponent = ImageCard2;
@@ -128,6 +133,17 @@ export const BasicLayout: FC<BasicLayout> = ({
       </div>
     );
   }, [selectedTemplate, items]);
+
+  const imageAspect = useMemo(() => {
+    switch (selectedTemplate) {
+      case MenuTemplate.FoodImage:
+        return 326 / 212;
+      case MenuTemplate.DrinkImage:
+        return 152 / 294;
+      default:
+        return undefined;
+    }
+  }, [selectedTemplate]);
 
   return (
     <>
@@ -179,6 +195,7 @@ export const BasicLayout: FC<BasicLayout> = ({
                   isLoading={isCreating || isLoading || isUpdating}
                   categories={categories}
                   priceTypes={priceTypes}
+                  imageAspect={imageAspect}
                 />
               </div>
             </Dialog>

@@ -5,7 +5,7 @@ import { FC, Fragment, HTMLAttributes } from 'react';
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot-white.svg';
 import TrashWarning from '@/assets/icon/trash-warning.svg';
-import Food1 from '@/assets/image/food1.png';
+import NoImage from '@/assets/image/no-image.svg';
 import { ItemDTO } from '@/types/item';
 import { mergeClasses } from '@/utils/common';
 
@@ -24,7 +24,6 @@ export const ImageCard1: FC<ImageCard1> = ({
   onRemove,
   ...props
 }) => {
-  console.log(data);
   return (
     <article
       className={mergeClasses(
@@ -35,7 +34,7 @@ export const ImageCard1: FC<ImageCard1> = ({
     >
       <div className="relative h-[106px] w-full rounded-[10px]">
         <Image
-          src={Food1}
+          src={data?.image || NoImage}
           alt=""
           className="rounded-[10px] object-cover object-top"
           fill
@@ -95,10 +94,10 @@ export const ImageCard1: FC<ImageCard1> = ({
 
       <div className="px-[8px] text-left">
         <p className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-          Hamburger thịt
+          {data?.name}
         </p>
         <p className="mb-[4px] text-[12px]/[16.8px] font-normal text-[#000]">
-          Lorem Ipsum is simply dummy text
+          {data?.description}
         </p>
         <span className="flex items-center justify-between gap-[13px]">
           <span className="text-[20px]/[24px] font-bold">25.000đ</span>
@@ -122,5 +121,14 @@ export const ImageCard1: FC<ImageCard1> = ({
         </span>
       </div>
     </article>
+  );
+};
+
+export const ImageCard1Skeleton = ({ className, ...props }) => {
+  return (
+    <article
+      className={mergeClasses('loading h-[245px] rounded-[10px]', className)}
+      {...props}
+    ></article>
   );
 };

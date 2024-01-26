@@ -14,7 +14,7 @@ import { itemService } from '@/services/item';
 import { storeService } from '@/services/store';
 import { StoreType } from '@/types/store';
 
-import { CategoryCreation } from './_components/CategoryCreation';
+import { CategoryAdd } from './_components/CategoryAdd';
 import { BasicLayout } from './_components/layouts/Basic';
 import { GroupLayout } from './_components/layouts/Group';
 
@@ -40,7 +40,7 @@ export default async function ({ params: { lang, id } }) {
       <>
         <div className="mb-[16px] flex items-center justify-between">
           <p className="text-white">{t('shopInfo')}</p>
-          {user && (
+          {isOwner && (
             <Link href={`${STORE_OWNER_ROUTE.STORE}/${id}/edit`}>
               <Image src={PencilWhite} alt="" />
             </Link>
@@ -78,7 +78,7 @@ export default async function ({ params: { lang, id } }) {
           <span className="text-[20px]/[24px] font-bold text-[#000]">
             {t('category')}
           </span>
-          {isOwner && <CategoryCreation storeId={id} />}
+          {isOwner && <CategoryAdd storeId={id} />}
         </div>
         {store?.storeTypeId === StoreType.FoodAndDrink && (
           <BasicLayout
@@ -92,8 +92,10 @@ export default async function ({ params: { lang, id } }) {
 
         {store.storeTypeId === StoreType.Spa && (
           <GroupLayout
-            isOwner={user.id === store.storeTemplateId}
+            isOwner={isOwner}
             categories={categories.content ?? []}
+            menuTemplates={MENU_TEMPLATES}
+            store={store}
           />
         )}
       </>
