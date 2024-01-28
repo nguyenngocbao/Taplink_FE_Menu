@@ -9,14 +9,18 @@ export const metadata = {
 };
 
 export default async function ({ params: { id } }) {
-  const cityOptions = await addressService.getCities();
   const storeTypes = await storeService.getStoreTypes();
   const store = await storeService.get(id);
+  const initCityOptions = await addressService.getCities();
+  const initDistrictOptions = await addressService.getDistricts(store.cityId);
+  const initWardOptions = await addressService.getWards(store.districtId);
 
   return (
     <main className="px-[16px] py-[29px]">
       <StoreEdit
-        cityOptions={cityOptions}
+        initCityOptions={initCityOptions}
+        initDistrictOptions={initDistrictOptions}
+        initWardOptions={initWardOptions}
         storeTypes={storeTypes}
         data={store}
       />

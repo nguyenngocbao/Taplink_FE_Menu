@@ -2,14 +2,17 @@
   "label": {
     "uploadImage": "Upload hình ảnh",
     "cancel": "Hủy bỏ",
+    "submit": "Xác nhận",
     "crop": "Cắt",
     "next": "Tiếp tục",
     "loading": "Đang tải",
-    "emailPlaceholder": "Nhập địa chỉ email"
+    "emailPlaceholder": "Nhập địa chỉ email",
+    "confirmDelete": "Xác Nhận Xóa"
   },
   "message": {
     "fieldRequired": "Trường bắt buộc",
     "emailInvalid": "Email không hợp lệ",
-    "uploadImageOversize": "Kích thước file không được vượt quá 5MB"
+    "uploadImageOversize": "Kích thước file không được vượt quá 5MB",
+    "logoutSuccess": "Đăng xuất thành công!"
   }
 }

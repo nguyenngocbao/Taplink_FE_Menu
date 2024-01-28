@@ -1,7 +1,7 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { FC, memo, useMemo } from 'react';
-import { Controller } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useTranslation } from '@/app/i18n/client';
@@ -17,25 +17,36 @@ import { addressService } from '@/services/address';
 import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
 
+const Controller = dynamic(
+  () => import('react-hook-form').then(m => ({ default: m.Controller })),
+  {
+    ssr: false
+  }
+);
+
 interface StoreFormProps {
   data?: StoreDTO;
   isLoading?: boolean;
   isEditable?: boolean;
   onSubmit?: (values: StoreDTO) => void;
   storeTypes: Option[];
-  cityOptions: Option[];
+  initCityOptions: Option[];
+  initWardOptions?: Option[];
+  initDistrictOptions?: Option[];
 }
 
 export const StoreForm: FC<StoreFormProps> = memo(
   ({
     isLoading,
     isEditable = true,
-    data: userInfo,
+    data,
     storeTypes,
-    cityOptions,
+    initCityOptions,
+    initDistrictOptions,
+    initWardOptions,
     onSubmit
   }) => {
-    const isAdd = userInfo === null;
+    const isAdd = data === null;
 
     const {
       data: districtOptions,
@@ -56,20 +67,17 @@ export const StoreForm: FC<StoreFormProps> = memo(
         z.object({
           name: z.string().min(1, t('message.fieldRequired', { ns: 'common' })),
           storeTypeId: z
-            .string()
+            .number()
             .min(1, t('message.fieldRequired', { ns: 'common' })),
           image: z.any(),
-          // nation: z
-          //   .string()
-          //   .min(1, t('message.fieldRequired', { ns: 'common' })),
           districtId: z
-            .string()
+            .number()
             .min(1, t('message.fieldRequired', { ns: 'common' })),
           cityId: z
-            .string()
+            .number()
             .min(1, t('message.fieldRequired', { ns: 'common' })),
           wardId: z
-            .string()
+            .number()
             .min(1, t('message.fieldRequired', { ns: 'common' })),
           address: z
             .string()
@@ -78,7 +86,7 @@ export const StoreForm: FC<StoreFormProps> = memo(
       []
     );
 
-    return userInfo !== undefined ? (
+    return data !== undefined ? (
       <div>
         <Form<StoreDTO, typeof schema>
           onSubmit={onSubmit}
@@ -99,7 +107,8 @@ export const StoreForm: FC<StoreFormProps> = memo(
               <>
                 <Controller
                   name="image"
-                  control={control}
+                  control={control as any}
+                  defaultValue={data?.image}
                   render={({ field: { onChange, value } }) => {
                     return (
                       <UploadImage
@@ -107,6 +116,7 @@ export const StoreForm: FC<StoreFormProps> = memo(
                         placeholder={t('uploadDesc')}
                         src={value}
                         onChange={onChange}
+                        aspect={358 / 215}
                       />
                     );
                   }}
@@ -115,7 +125,7 @@ export const StoreForm: FC<StoreFormProps> = memo(
                 <InputField
                   aria-label="name"
                   error={formState.errors['name']}
-                  registration={register('name', { value: userInfo?.name })}
+                  registration={register('name', { value: data?.name })}
                   label={t('storeName')}
                   placeholder={t('storeNamePlaceholder')}
                   disabled={!isEditable}
@@ -128,7 +138,7 @@ export const StoreForm: FC<StoreFormProps> = memo(
                   disabled={!isEditable}
                   placeholder={t('storeTypePlaceholder')}
                   registration={register('storeTypeId', {
-                    value: userInfo?.storeTypeId ?? ''
+                    value: data?.storeTypeId
                   })}
                 ></SelectField>
 
@@ -150,42 +160,42 @@ export const StoreForm: FC<StoreFormProps> = memo(
                     })}
                   ></SelectField> */}
                   <SelectField
-                    options={cityOptions}
+                    options={initCityOptions}
                     label={t('provinceCity')}
                     error={formState.errors?.cityId}
                     disabled={!isEditable}
                     placeholder={t('provinceCityPlaceholder')}
                     registration={register('cityId', {
-                      value: userInfo?.cityId ?? ''
+                      value: data?.cityId ?? ''
                     })}
                   ></SelectField>
                   <SelectField
-                    options={districtOptions ?? []}
+                    options={districtOptions ?? initDistrictOptions ?? []}
                     isLoading={isLoadingDistrict}
                     label={t('district')}
                     error={formState.errors?.districtId}
                     disabled={!isEditable || !getValues('cityId')}
                     placeholder={t('districtPlaceholder')}
                     registration={register('districtId', {
-                      value: userInfo?.districtId ?? ''
+                      value: data?.districtId ?? ''
                     })}
                   ></SelectField>
                   <SelectField
-                    options={wardOptions ?? []}
+                    options={wardOptions ?? initWardOptions ?? []}
                     isLoading={isLoadingWard}
                     label={t('ward')}
                     error={formState.errors?.wardId}
                     disabled={!isEditable || !getValues('districtId')}
                     placeholder={t('wardPlaceholder')}
                     registration={register('wardId', {
-                      value: userInfo?.wardId ?? ''
+                      value: data?.wardId ?? ''
                     })}
                   ></SelectField>
 
                   <InputField
                     error={formState.errors.address}
                     registration={register('address', {
-                      value: userInfo?.address
+                      value: data?.address
                     })}
                     label={t('detailAddress')}
                     placeholder={t('detailAddressPlaceholder')}

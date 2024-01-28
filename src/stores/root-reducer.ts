@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 
-import { reducer as authReducer } from './slices/auth';
+import { reducer as confirmDialogReducer } from './slices/confirmDialog';
 
 export const rootReducer = combineReducers({
-  auth: authReducer
+  confirmDialog: confirmDialogReducer
 });

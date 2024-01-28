@@ -55,7 +55,7 @@ export const CategoryForm: FC<CategoryFormProps> = memo(
                       placeholder={t('uploadImageCateDesc')}
                       src={value}
                       onChange={onChange}
-                      aspect={326 / 390}
+                      aspect={163 / 195}
                     />
                   );
                 }}

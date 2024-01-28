@@ -316,6 +316,8 @@ export function blobToBase64(blob): Promise<string> {
 }
 
 export function dataURLtoFile(dataurl, filename) {
+  if (!dataurl) return null;
+
   const arr = dataurl.split(','),
     mime = arr[0].match(/:(.*?);/)[1],
     bstr = atob(arr[arr.length - 1]);

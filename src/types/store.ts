@@ -12,6 +12,7 @@ export type StoreDTO = {
   storeTypeId: number | string;
   image: string;
   address: string;
+  fullAddress?: string;
   wardId: number | string;
   cityId: number | string;
   districtId: number | string;

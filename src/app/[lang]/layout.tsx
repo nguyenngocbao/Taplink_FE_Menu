@@ -2,6 +2,7 @@ import { dir } from 'i18next';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { ConfirmationItemDialog } from '@/components/core';
 import { WrappedToast } from '@/components/core/Toast';
 import { AuthProvider } from '@/components/features/auth/AuthProvider';
 import { AuthClientSetup } from '@/components/layouts/AuthClientSetup';
@@ -74,6 +75,7 @@ export default async function RootLayout({
         <AuthProvider>
           <AuthClientSetup session={session} />
           <ReduxProvider>
+            <ConfirmationItemDialog />
             <Header />
             {children}
           </ReduxProvider>

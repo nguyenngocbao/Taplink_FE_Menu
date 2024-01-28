@@ -69,7 +69,7 @@ export default async function ({ params: { lang, id } }) {
                 alt=""
                 className="mt-[1px] h-[13px] w-[15px]"
               />
-              <span>{store.address}</span>
+              <span>{store.fullAddress}</span>
             </p>
           </div>
         </div>

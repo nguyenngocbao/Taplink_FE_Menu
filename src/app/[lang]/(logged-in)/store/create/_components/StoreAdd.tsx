@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
+import { useTranslation } from '@/app/i18n/client';
 import { StoreForm } from '@/components/features';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
@@ -12,7 +13,7 @@ import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
-import { dataURLtoFile, getFormData } from '@/utils/common';
+import { dataURLtoFile, getFormData, isValidHttpUrl } from '@/utils/common';
 
 interface StoreAdd {
   cityOptions: Option[];
@@ -23,6 +24,7 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
   const router = useRouter();
   const query = useSearchParams();
   const deviceId = query.get('device_id');
+  const { t } = useTranslation('myPage');
 
   const { createItem, isCreating } = useCreate({ service: storeService });
 
@@ -39,7 +41,9 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
         getFormData({
           ...data,
           ...(image && {
-            image: dataURLtoFile(image, 'image.png')
+            image: isValidHttpUrl(image)
+              ? image
+              : dataURLtoFile(image, 'image.png')
           })
         }),
         false,
@@ -55,7 +59,7 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
         });
       }
 
-      toast.success('Create store successfully');
+      toast.success(t('createStoreSuccess'));
       router.push(STORE_OWNER_ROUTE.STORE + '/' + newStore.id);
     },
     [router]
@@ -66,7 +70,7 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
       storeTypes={storeTypes}
       data={null}
       isLoading={isCreating || connectDeviceApi.isLoading}
-      cityOptions={cityOptions}
+      initCityOptions={cityOptions}
       onSubmit={onSubmit}
     />
   );

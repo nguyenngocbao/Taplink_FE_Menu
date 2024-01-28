@@ -35,5 +35,10 @@
   "updateCateSuccess": "Update category successfully!",
   "createCateSuccess": "Create category successfully!",
   "deleteCateSuccess": "Delete category successfully!",
-  "noCategories": "Please add at least one category before adding a new item."
+  "updateStoreSuccess": "Update store successfully",
+  "createStoreSuccess": "Create store successfully",
+  "noCategories": "Please add at least one category before adding a new item.",
+  "confirmDeleteItem": "Are you sure you want to delete this item?",
+  "confirmDeleteCate": "Are you sure you want to delete this category?",
+  "confirmDeleteStore": "Are you sure you want to delete this store?"
 }

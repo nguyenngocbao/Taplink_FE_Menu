@@ -36,12 +36,12 @@ export const StoreItem: FC<StoreItem> = ({ data, className, ...props }) => {
 
         <div className="flex flex-col justify-center gap-[5px]">
           <p className="flex items-center gap-[8px] text-[12px]/[16.8px]">
-            <Image src={MarkerBlack} alt="" className="h-[10px] w-[10px]" />
+            <Image src={PhoneBlack} alt="" className="h-[10px] w-[10px]" />
             <span>{data.phone}</span>
           </p>
           <p className="flex items-start gap-[8px] text-[12px]/[16.8px]">
-            <Image src={PhoneBlack} alt="" className="h-[10px] w-[10px]" />
-            <span>{data.address}</span>
+            <Image src={MarkerBlack} alt="" className="h-[10px] w-[10px]" />
+            <span>{data.fullAddress}</span>
           </p>
         </div>
       </div>

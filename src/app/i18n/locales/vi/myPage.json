@@ -35,5 +35,10 @@
   "deleteItemFail": "Xóa sản phẩm thất bại",
   "createCateSuccess": "Tạo thể loại thành công!",
   "deleteCateSuccess": "Xóa thể loại thành công!",
-  "noCategories": "Vui lòng thêm ít nhất một thể loại trước khi thêm sản phẩm mới."
+  "updateStoreSuccess": "Cập nhật cửa hàng thành công!",
+  "createStoreSuccess": "Tạo cửa hàng thành công!",
+  "noCategories": "Vui lòng thêm ít nhất một thể loại trước khi thêm sản phẩm mới.",
+  "confirmDeleteItem": "Bạn có chắc chắn muốn xóa mục này không?",
+  "confirmDeleteCate": "Bạn có chắc chắn muốn xóa danh mục này không?",
+  "confirmDeleteStore": "Bạn có chắc chắn muốn xóa cửa hàng này không?"
 }

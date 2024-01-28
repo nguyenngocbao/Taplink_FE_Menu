@@ -1,6 +1,6 @@
 import { Menu, Transition } from '@headlessui/react';
 import Image from 'next/image';
-import { FC, Fragment, HTMLAttributes } from 'react';
+import { FC, Fragment, HTMLAttributes, MouseEventHandler } from 'react';
 
 import SquarePencilPrimary from '@/assets/icon/square-pencil-primary.svg';
 import ThreeDot from '@/assets/icon/three-dot.svg';
@@ -12,8 +12,8 @@ import { mergeClasses } from '@/utils/common';
 interface GroupImageCard extends HTMLAttributes<HTMLElement> {
   t: any;
   data?: CategoryDTO;
-  onEdit?: () => void;
-  onRemove?: () => void;
+  onEdit?: MouseEventHandler<HTMLButtonElement>;
+  onRemove?: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const GroupImageCard: FC<GroupImageCard> = ({

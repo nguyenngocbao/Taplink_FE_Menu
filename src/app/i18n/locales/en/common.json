@@ -2,14 +2,17 @@
   "label": {
     "uploadImage": "Upload image",
     "cancel": "Cancel",
+    "submit": "Submit",
     "crop": "Crop",
     "next": "Next",
     "loading": "Loading",
-    "emailPlaceholder": "Enter email address"
+    "emailPlaceholder": "Enter email address",
+    "confirmDelete": "Confirm Deletion"
   },
   "message": {
     "fieldRequired": "Field is required",
     "emailInvalid": "Email is invalid",
-    "uploadImageOversize": "File size should not exceed 5MB"
+    "uploadImageOversize": "File size should not exceed 5MB",
+    "logoutSuccess": "Log out successfully!"
   }
 }

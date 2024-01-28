@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import { toast } from 'react-toastify';
 
 import { useTranslation } from '@/app/i18n/client';
@@ -7,7 +7,7 @@ import { CategoryForm } from '@/components/features';
 import { useUpdate } from '@/hooks/features';
 import { categoryService } from '@/services/category';
 import { CategoryDTO } from '@/types/category';
-import { dataURLtoFile } from '@/utils/common';
+import { dataURLtoFile, isValidHttpUrl } from '@/utils/common';
 
 interface CategoryEdit {
   data: CategoryDTO;
@@ -20,7 +20,7 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
 
   const { updateItem, isUpdating } = useUpdate({ service: categoryService });
 
-  const onSubmit = useCallback(async (value: CategoryDTO) => {
+  const onSubmit = async (value: CategoryDTO) => {
     await updateItem(
       {
         name: value.name,
@@ -28,7 +28,9 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
         templateId: value.templateId,
         storeId: value.storeId,
         ...(value?.image && {
-          image: dataURLtoFile(value.image, 'image.png')
+          image: isValidHttpUrl(value?.image)
+            ? value?.image
+            : dataURLtoFile(value.image, 'image.png')
         })
       },
       data.id,
@@ -39,7 +41,7 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
     );
     close();
     toast.success(t('updateCateSuccess'));
-  }, []);
+  };
 
   return (
     <>

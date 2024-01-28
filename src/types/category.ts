@@ -24,4 +24,10 @@ export type CategoryPostReq = {
   image?: File;
 };
 
-export type CategoryPutReq = CategoryPostReq;
+export type CategoryPutReq = {
+  storeId: number;
+  name: string;
+  description?: string;
+  templateId?: number;
+  image?: File | string;
+};

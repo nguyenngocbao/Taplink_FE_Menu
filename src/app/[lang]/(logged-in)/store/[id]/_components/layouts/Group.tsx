@@ -10,6 +10,11 @@ import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDisclosure } from '@/hooks';
 import { useDelete } from '@/hooks/features';
 import { categoryService } from '@/services/category';
+import { useDispatch } from '@/stores';
+import {
+  hideConfirmDialog,
+  showConfirmDialog
+} from '@/stores/slices/confirmDialog';
 import { Option } from '@/types';
 import { CategoryDTO } from '@/types/category';
 import { StoreDTO } from '@/types/store';
@@ -26,6 +31,7 @@ interface GroupLayout {
 export const GroupLayout: FC<GroupLayout> = ({ categories }) => {
   const [selectedCate, setSelectedCate] = useState(null);
   const { t } = useTranslation('myPage');
+  const dispatch = useDispatch();
   const { isOpen, open, close } = useDisclosure();
 
   const { deleteItem, isDeleting } = useDelete({ service: categoryService });
@@ -49,13 +55,35 @@ export const GroupLayout: FC<GroupLayout> = ({ categories }) => {
                   data={cate}
                   t={t}
                   className="h-full"
-                  onEdit={() => {
+                  onEdit={e => {
+                    e.preventDefault();
                     setSelectedCate(cate);
                     open();
                   }}
-                  onRemove={async () => {
-                    //TODO: show confirm
-                    await removeItem(cate.id);
+                  onRemove={async e => {
+                    e.preventDefault();
+                    dispatch(
+                      showConfirmDialog({
+                        title: t('label.confirmDelete', { ns: 'common' }),
+                        desc: t('confirmDeleteCate'),
+                        items: [
+                          {
+                            label: t('category'),
+                            value: cate.name
+                          },
+                          {
+                            label: t('desc'),
+                            value: cate.description
+                          }
+                        ],
+                        action: 'delete',
+                        submitBtnText: t('label.submit', { ns: 'common' }),
+                        async callback() {
+                          await removeItem(cate.id);
+                          dispatch(hideConfirmDialog());
+                        }
+                      })
+                    );
                   }}
                 />
               </Link>

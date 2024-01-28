@@ -3,6 +3,8 @@ import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { useTranslation } from '@/app/i18n/client';
+
 type UseLogoutProps = {
   callbackUrl: string;
   successMessage?: string;
@@ -11,6 +13,7 @@ type UseLogoutProps = {
 export function useLogout({ callbackUrl, successMessage }: UseLogoutProps) {
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(false);
+  const { t } = useTranslation('common');
 
   const logOut = async () => {
     try {
@@ -20,7 +23,7 @@ export function useLogout({ callbackUrl, successMessage }: UseLogoutProps) {
         redirect: false
       });
 
-      toast.success(successMessage ?? 'Log out successfully!');
+      toast.success(successMessage ?? t('message.logoutSuccess'));
 
       // TODO: Reset states
 

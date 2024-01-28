@@ -119,6 +119,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
         const croppedImage = await getCroppedImg(tempImage, croppedAreaPixels);
         onChange(croppedImage);
         reset();
+        setError(false);
       } catch (e) {
         console.error(e);
       }
@@ -190,7 +191,7 @@ export const UploadImage: FC<UploadImageProps> = memo(
             </button>
             <button
               onClick={onClear}
-              disabled={tempImage == null}
+              disabled={getImageSrc === NoImage}
               type="button"
               className="flex h-[40px] w-[46px] items-center justify-center bg-primary disabled:cursor-default disabled:border-current disabled:bg-disabled disabled:text-black/40"
             >
