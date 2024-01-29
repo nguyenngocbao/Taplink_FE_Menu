@@ -6,8 +6,7 @@ export const STORE_OWNER_ROUTE = {
   HOME: '/',
   CREATE_STORE: '/store/create',
   STORE: '/store',
-  SIGN_UP: '/sign-up',
-  CATEGORY: '/category'
+  SIGN_UP: '/sign-up'
 };
 
 export const ADMIN_ROUTE = {

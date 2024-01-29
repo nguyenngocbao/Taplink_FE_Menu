@@ -26,6 +26,13 @@ export const GroupImageCard: FC<GroupImageCard> = ({
 }) => {
   return (
     <article
+      role="presentation"
+      onClick={e => {
+        if ((e.target as HTMLElement).closest('.edit-btn')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
       className={mergeClasses(
         'relative flex flex-col gap-[12px] rounded-[10px] bg-primary-bg px-[4px] pb-[10px] pt-[4px]',
         className
@@ -43,7 +50,7 @@ export const GroupImageCard: FC<GroupImageCard> = ({
           as="div"
           className="absolute right-0 top-[7px] inline-block h-[20px] w-[20px]"
         >
-          <Menu.Button className="flex items-center justify-center">
+          <Menu.Button className="edit-btn flex items-center justify-center">
             <Image src={ThreeDot} alt="" />
           </Menu.Button>
           <Transition

@@ -28,7 +28,7 @@ interface GroupLayout {
   store: StoreDTO;
 }
 
-export const GroupLayout: FC<GroupLayout> = ({ categories }) => {
+export const GroupLayout: FC<GroupLayout> = ({ categories, store }) => {
   const [selectedCate, setSelectedCate] = useState(null);
   const { t } = useTranslation('myPage');
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ export const GroupLayout: FC<GroupLayout> = ({ categories }) => {
             return (
               <Link
                 className="w-[calc(50%_-_8px)]"
-                href={`${STORE_OWNER_ROUTE.CATEGORY}/${cate.id}/items`}
+                href={`${STORE_OWNER_ROUTE.STORE}/${store.id}/category/${cate.id}/items`}
                 key={cate.id}
               >
                 <GroupImageCard

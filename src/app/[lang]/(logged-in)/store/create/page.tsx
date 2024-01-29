@@ -9,8 +9,10 @@ export const metadata = {
 };
 
 export default async function () {
-  const cityOptions = await addressService.getCities();
-  const storeTypes = await storeService.getStoreTypes();
+  const [cityOptions, storeTypes] = await Promise.all([
+    addressService.getCities(),
+    storeService.getStoreTypes()
+  ]);
 
   return (
     <main className="px-[16px] py-[29px]">

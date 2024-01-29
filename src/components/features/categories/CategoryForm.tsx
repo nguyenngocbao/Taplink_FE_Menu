@@ -40,7 +40,7 @@ export const CategoryForm: FC<CategoryFormProps> = memo(
       <Form<CategoryDTO, typeof schema>
         onSubmit={onSubmit}
         schema={schema}
-        className="w-[calc(100vw_-_64px)] text-left"
+        className="w-full text-left"
       >
         {({ register, control, formState }) => {
           return (

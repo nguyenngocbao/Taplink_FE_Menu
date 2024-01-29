@@ -17,12 +17,15 @@ export const AuthClientSetup = ({ session }: { session: Session }) => {
     axios.defaults.headers['Authorization'] = undefined;
   }
 
-  useSession();
+  const { status } = useSession();
 
-  if (session?.error === 'RefreshAccessTokenError') {
+  if (
+    session?.error === 'RefreshAccessTokenError' ||
+    status === 'unauthenticated'
+  ) {
     signOut({
       redirect: false,
-      callbackUrl: FAILLBACK_ROUTES[session.user.role]
+      callbackUrl: FAILLBACK_ROUTES[session?.user?.role ?? 'unknown']
     });
   }
 

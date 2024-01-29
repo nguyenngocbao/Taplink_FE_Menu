@@ -7,7 +7,8 @@
     "next": "Tiếp tục",
     "loading": "Đang tải",
     "emailPlaceholder": "Nhập địa chỉ email",
-    "confirmDelete": "Xác Nhận Xóa"
+    "confirmDelete": "Xác Nhận Xóa",
+    "noItem": "Không có sản phẩm nào. Vui lòng thêm mới"
   },
   "message": {
     "fieldRequired": "Trường bắt buộc",

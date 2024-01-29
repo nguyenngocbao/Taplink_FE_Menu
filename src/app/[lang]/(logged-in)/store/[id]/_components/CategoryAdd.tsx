@@ -55,7 +55,9 @@ export const CategoryAdd: FC<CategoryAdd> = ({ storeId }) => {
         </span>
       </button>
       <Dialog title={t('addCategory')} isOpen={isOpen} onClose={close}>
-        <CategoryForm isLoading={isCreating} onSubmit={onSubmit} />
+        <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[2px] text-left">
+          <CategoryForm isLoading={isCreating} onSubmit={onSubmit} />
+        </div>
       </Dialog>
     </>
   );

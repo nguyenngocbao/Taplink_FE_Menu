@@ -18,12 +18,22 @@ import { CategoryAdd } from './_components/CategoryAdd';
 import { BasicLayout } from './_components/layouts/Basic';
 import { GroupLayout } from './_components/layouts/Group';
 
+export const metadata = {
+  title: 'Store detail',
+  description: 'Store detail in taplink'
+};
+
 export default async function ({ params: { lang, id } }) {
-  const { t } = await useTranslation(lang, 'myPage');
+  const promises = Promise.all([
+    useTranslation(lang, 'myPage'),
+    getCurrentUser(),
+    itemService.getPriceTypes()
+  ]);
   const store = await storeService.get(id);
   const categories = await categoryService.list({ storeId: id });
-  const priceTypeRes = await itemService.getPriceTypes();
-  const user = await getCurrentUser();
+  const [{ t }, user, priceTypeRes] = await promises;
+
+  const sortedCategories = categories.content.sort((a, b) => a.id - b.id);
   const isOwner = user && user?.id === store?.storeOwnerId;
 
   return (
@@ -83,7 +93,7 @@ export default async function ({ params: { lang, id } }) {
         {store?.storeTypeId === StoreType.FoodAndDrink && (
           <BasicLayout
             menuTemplates={MENU_TEMPLATES}
-            categories={categories.content ?? []}
+            categories={sortedCategories ?? []}
             store={store}
             priceTypes={priceTypeRes}
             isOwner={isOwner}
@@ -93,7 +103,7 @@ export default async function ({ params: { lang, id } }) {
         {store.storeTypeId === StoreType.Spa && (
           <GroupLayout
             isOwner={isOwner}
-            categories={categories.content ?? []}
+            categories={sortedCategories ?? []}
             menuTemplates={MENU_TEMPLATES}
             store={store}
           />

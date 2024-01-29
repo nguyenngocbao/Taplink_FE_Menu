@@ -46,7 +46,13 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
   return (
     <>
       <Dialog title={t('addCategory')} isOpen={isOpen} onClose={close}>
-        <CategoryForm data={data} isLoading={isUpdating} onSubmit={onSubmit} />
+        <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
+          <CategoryForm
+            data={data}
+            isLoading={isUpdating}
+            onSubmit={onSubmit}
+          />
+        </div>
       </Dialog>
     </>
   );
