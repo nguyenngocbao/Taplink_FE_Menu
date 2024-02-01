@@ -127,44 +127,48 @@ export const BasicLayout: FC<BasicLayout> = ({
           }}
         />
 
-        <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
-          <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
-            <ItemForm
-              onSubmit={async (newItem: ItemDTO) => {
-                try {
-                  const action = selectedItem ? editItem : addItem;
-                  await action(newItem);
-                  getListItem({ categoryId: categoryId });
-                  close();
-                } catch (e) {
-                  console.log(e);
+        {isOwner && (
+          <>
+            <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
+              <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
+                <ItemForm
+                  onSubmit={async (newItem: ItemDTO) => {
+                    try {
+                      const action = selectedItem ? editItem : addItem;
+                      await action(newItem);
+                      getListItem({ categoryId: categoryId });
+                      close();
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
+                  data={selectedItem}
+                  isLoading={isCreating || isLoading || isUpdating}
+                  categories={categories}
+                  priceTypes={priceTypes}
+                  imageAspect={imageAspect}
+                />
+              </div>
+            </Dialog>
+            <button
+              onClick={() => {
+                if (!categories.length) {
+                  toast.info(t('noCategories'));
+                  return;
                 }
+                setSelectedItem(null);
+                open();
               }}
-              data={selectedItem}
-              isLoading={isCreating || isLoading || isUpdating}
-              categories={categories}
-              priceTypes={priceTypes}
-              imageAspect={imageAspect}
-            />
-          </div>
-        </Dialog>
-        <button
-          onClick={() => {
-            if (!categories.length) {
-              toast.info(t('noCategories'));
-              return;
-            }
-            setSelectedItem(null);
-            open();
-          }}
-          style={{
-            bottom: '16px',
-            right: '16px'
-          }}
-          className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
-        >
-          <Image src={PlusWhite} alt="" />
-        </button>
+              style={{
+                bottom: '16px',
+                right: '16px'
+              }}
+              className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
+            >
+              <Image src={PlusWhite} alt="" />
+            </button>
+          </>
+        )}
       </div>
     </>
   );

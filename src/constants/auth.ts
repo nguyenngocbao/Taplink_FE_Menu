@@ -6,11 +6,15 @@ import { ADMIN_ROUTE, STORE_OWNER_ROUTE } from './routes';
 
 export const ACCESS_CONTROLS: { regex: RegExp; roles: ROLE[] }[] = [
   {
-    regex: /^\/login$/,
-    roles: ['unknown', 'admin']
+    regex: /^\/(en|vi)?$/,
+    roles: ['store_owner']
   },
   {
-    regex: /^\/(en|vi)?$/,
+    regex: /^\/(en|vi)?\/store\/\d+\/edit$/,
+    roles: ['store_owner']
+  },
+  {
+    regex: /^\/(en|vi)?\/store\/create$/,
     roles: ['store_owner']
   }
 ];

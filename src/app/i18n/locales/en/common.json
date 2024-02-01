@@ -8,7 +8,7 @@
     "loading": "Loading",
     "emailPlaceholder": "Enter email address",
     "confirmDelete": "Confirm Deletion",
-    "noItem": "There are no items. Please add a new one"
+    "noItem": "There are no items."
   },
   "message": {
     "fieldRequired": "Field is required",

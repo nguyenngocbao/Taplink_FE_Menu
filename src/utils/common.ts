@@ -182,7 +182,8 @@ export async function callApi<R>(
   method: Method,
   body?: any,
   isMock?: boolean,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
+  isUseBody?: boolean
 ): Promise<R> {
   switch (method) {
     case 'GET':
@@ -190,16 +191,17 @@ export async function callApi<R>(
     case 'DELETE':
     case 'delete':
       if (isOnServer()) {
-        const params = new URLSearchParams(body);
+        const params = isUseBody ? '' : new URLSearchParams(body);
         return fetchServer(`${href}?${params}`, method, {
           tags: [href],
+          ...(isUseBody && { body }),
           isMock: isMock,
           headers: headers
         });
       }
 
       return await axios[method.toLowerCase()](href, {
-        params: body,
+        ...(isUseBody ? { data: body } : { params: body }),
         baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
         ...(headers && { headers: headers })
       });

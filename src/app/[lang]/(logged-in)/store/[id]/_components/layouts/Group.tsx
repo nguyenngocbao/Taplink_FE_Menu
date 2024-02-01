@@ -28,7 +28,11 @@ interface GroupLayout {
   store: StoreDTO;
 }
 
-export const GroupLayout: FC<GroupLayout> = ({ categories, store }) => {
+export const GroupLayout: FC<GroupLayout> = ({
+  categories,
+  store,
+  isOwner
+}) => {
   const [selectedCate, setSelectedCate] = useState(null);
   const { t } = useTranslation('myPage');
   const dispatch = useDispatch();
@@ -91,7 +95,9 @@ export const GroupLayout: FC<GroupLayout> = ({ categories, store }) => {
           })}
         </div>
       </div>
-      <CategoryEdit isOpen={isOpen} data={selectedCate} close={close} />
+      {isOwner && (
+        <CategoryEdit isOpen={isOpen} data={selectedCate} close={close} />
+      )}
       {isDeleting && <Spinner isCenter />}
     </>
   );

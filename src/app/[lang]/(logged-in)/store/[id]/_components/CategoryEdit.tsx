@@ -6,6 +6,7 @@ import { Dialog } from '@/components/core';
 import { CategoryForm } from '@/components/features';
 import { useUpdate } from '@/hooks/features';
 import { categoryService } from '@/services/category';
+import { fileService } from '@/services/file';
 import { CategoryDTO } from '@/types/category';
 import { dataURLtoFile, isValidHttpUrl } from '@/utils/common';
 
@@ -21,6 +22,12 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
   const { updateItem, isUpdating } = useUpdate({ service: categoryService });
 
   const onSubmit = async (value: CategoryDTO) => {
+    if (!value?.image) {
+      fileService.deleteImage({
+        id: data.id,
+        type: 'CATEGORY'
+      });
+    }
     await updateItem(
       {
         name: value.name,
