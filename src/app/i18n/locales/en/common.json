@@ -5,15 +5,19 @@
     "submit": "Submit",
     "crop": "Crop",
     "next": "Next",
+    "yes": "Yes",
+    "no": "No",
     "loading": "Loading",
     "emailPlaceholder": "Enter email address",
     "confirmDelete": "Confirm Deletion",
-    "noItem": "There are no items."
+    "noItem": "There are no items.",
+    "logout": "Log out"
   },
   "message": {
     "fieldRequired": "Field is required",
     "emailInvalid": "Email is invalid",
     "uploadImageOversize": "File size should not exceed 5MB",
-    "logoutSuccess": "Log out successfully!"
+    "logoutSuccess": "Log out successfully!",
+    "confirmLogout": "Are you sure you want to logout?"
   }
 }

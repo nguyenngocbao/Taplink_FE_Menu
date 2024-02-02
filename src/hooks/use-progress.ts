@@ -15,11 +15,13 @@ export const useProgress = () => {
         return;
       }
 
+      if (e.target.getAttribute('data-custom-ignore')) return;
+
       // not a anchor elment
       const anchorEl = e.target.closest('a');
       if (anchorEl === null) return;
 
-      if (anchorEl.getAttribute('custom-ignore')) return;
+      if (anchorEl.getAttribute('data-custom-ignore')) return;
 
       // same location
       if (

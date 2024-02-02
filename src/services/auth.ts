@@ -1,7 +1,7 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
 import { SendOtpRequest, VerifyOtpRequest } from '@/types/auth';
-import { isOnServer } from '@/utils/common';
+import { bindMethodsToSelf, isOnServer } from '@/utils/common';
 
 export const AUTH_APIs = {
   SEND_OTP: '/api/v1/auth/send-otp',
@@ -10,6 +10,9 @@ export const AUTH_APIs = {
 };
 
 class AuthService {
+  constructor() {
+    bindMethodsToSelf(AuthService, this);
+  }
   async veriryOTP(body: VerifyOtpRequest) {
     let res = null;
 

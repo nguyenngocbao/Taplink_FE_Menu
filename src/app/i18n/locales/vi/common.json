@@ -5,15 +5,19 @@
     "submit": "Xác nhận",
     "crop": "Cắt",
     "next": "Tiếp tục",
+    "yes": "Có",
+    "no": "Không",
     "loading": "Đang tải",
     "emailPlaceholder": "Nhập địa chỉ email",
     "confirmDelete": "Xác Nhận Xóa",
-    "noItem": "Không có sản phẩm nào."
+    "noItem": "Không có sản phẩm nào.",
+    "logout": "Đăng xuất"
   },
   "message": {
     "fieldRequired": "Trường bắt buộc",
     "emailInvalid": "Email không hợp lệ",
     "uploadImageOversize": "Kích thước file không được vượt quá 5MB",
-    "logoutSuccess": "Đăng xuất thành công!"
+    "logoutSuccess": "Đăng xuất thành công!",
+    "confirmLogout": "Bạn có muốn đăng xuất?"
   }
 }

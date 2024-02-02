@@ -3,13 +3,20 @@ import { toast } from 'react-toastify';
 
 import { MenuTemplate } from '@/constants/template';
 import { categoryService } from '@/services/category';
+import { fileService } from '@/services/file';
 import { itemService } from '@/services/item';
 import { CategoryDTO } from '@/types/category';
 import { ItemDTO } from '@/types/item';
 import { StoreDTO } from '@/types/store';
-import { dataURLtoFile, getFormData } from '@/utils/common';
+import {
+  dataURLtoFile,
+  getCompressedImage,
+  getFormData,
+  isValidHttpUrl
+} from '@/utils/common';
 
-import { useCreate, useDelete, useList, useUpdate } from './crud';
+import { useDataApi } from '../use-data-api';
+import { useSearch } from '../use-search';
 
 interface useItemProps {
   t: any;
@@ -19,15 +26,15 @@ interface useItemProps {
 }
 
 export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
-  const { createItem, isCreating } = useCreate({ service: itemService });
-  const { deleteItem, isDeleting } = useDelete({ service: itemService });
-  const { updateItem, isUpdating } = useUpdate({ service: itemService });
-  const { updateItem: updateCategory } = useUpdate({
-    service: categoryService
-  });
+  const deleteFileApi = useDataApi(fileService.deleteImage);
+  const compressImgApi = useDataApi(getCompressedImage);
+  const createItemApi = useDataApi(itemService.create);
+  const deleteItemApi = useDataApi(itemService.delete);
+  const updateItemApi = useDataApi(itemService.update);
+  const updateCategoryApi = useDataApi(categoryService.update);
 
-  const { data, isInitialLoading, isLoading, getList } = useList({
-    service: itemService,
+  const { data, isInitialLoading, isLoading, getList } = useSearch({
+    func: itemService.list,
     useQueryParams: false,
     initialParams: {
       categoryId: String(categoryId)
@@ -45,11 +52,11 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
   const addItem = async (values: ItemDTO) => {
     const { image, ...data } = values;
     try {
-      await createItem(
+      await createItemApi.call(
         getFormData({
           ...data,
           ...(image && {
-            image: dataURLtoFile(image, 'image.jpg')
+            image: await compressImgApi.call(dataURLtoFile(image, 'image.jpg'))
           }),
           priceInfo: JSON.stringify(values.priceInfo)
         }),
@@ -68,7 +75,7 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
 
   const removeItem = async (id: number) => {
     try {
-      await deleteItem(id);
+      await deleteItemApi.call(id);
       toast.success(t('deleteItemSuccess'));
     } catch (e) {
       console.log(e);
@@ -77,13 +84,22 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
 
   const editItem = async (values: ItemDTO) => {
     try {
-      await updateItem(
+      if (!values?.image) {
+        await deleteFileApi.call({
+          id: values.id,
+          type: 'MENU_ITEM'
+        });
+      }
+      await updateItemApi.call(
         getFormData({
           id: values.id,
           name: values.name,
-          ...(values.image && {
-            image: dataURLtoFile(values.image, 'image.png')
-          }),
+          ...(values.image &&
+            !isValidHttpUrl(values?.image) && {
+              image: await compressImgApi.call(
+                dataURLtoFile(values.image, 'image.png')
+              )
+            }),
           description: values.description,
           categoryId: values.categoryId,
           priceTypeId: values.priceTypeId,
@@ -100,10 +116,9 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
   const onChangeMenuTemplate = id => {
     setSelectedTemplate(Number(id));
 
-    updateCategory(
+    updateCategoryApi.call(
       {
         description: selectedCate.description,
-        image: selectedCate.image,
         storeId: store.id,
         name: selectedCate.name,
         templateId: Number(id)
@@ -130,9 +145,12 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
   return {
     items,
     isLoading,
-    isCreating,
-    isDeleting,
-    isUpdating,
+    isCreating: createItemApi.isLoading || compressImgApi.isLoading,
+    isDeleting: deleteItemApi.isLoading,
+    isUpdating:
+      updateItemApi.isLoading ||
+      deleteFileApi.isLoading ||
+      compressImgApi.isLoading,
     imageAspect,
     isInitialLoading,
     selectedTemplate,

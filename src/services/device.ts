@@ -1,13 +1,16 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
 import { ConnectStoreReqPayload, DeviceModal } from '@/types/device';
-import { isOnServer } from '@/utils/common';
+import { bindMethodsToSelf, isOnServer } from '@/utils/common';
 
 export const DEVICE_APIs = {
   INDEX: '/api/v1/devices'
 };
 
 class DeviceService {
+  constructor() {
+    bindMethodsToSelf(DeviceService, this);
+  }
   async connectStore(body: ConnectStoreReqPayload): Promise<unknown> {
     let res = null;
     if (isOnServer()) {

@@ -8,12 +8,17 @@ import { useTranslation } from '@/app/i18n/client';
 import { StoreForm } from '@/components/features';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
-import { useUpdate } from '@/hooks/features';
 import { deviceService } from '@/services/device';
+import { fileService } from '@/services/file';
 import { storeService } from '@/services/store';
 import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
-import { dataURLtoFile, getFormData, isValidHttpUrl } from '@/utils/common';
+import {
+  dataURLtoFile,
+  getCompressedImage,
+  getFormData,
+  isValidHttpUrl
+} from '@/utils/common';
 
 interface StoreEdit {
   initCityOptions: Option[];
@@ -35,22 +40,28 @@ export const StoreEdit: FC<StoreEdit> = ({
   const query = useSearchParams();
   const deviceId = query.get('device_id');
 
-  const { updateItem, isUpdating } = useUpdate({ service: storeService });
+  const updateStoreApi = useDataApi(storeService.update);
+  const deleteFileApi = useDataApi(fileService.deleteImage);
+  const compressImgApi = useDataApi(getCompressedImage);
 
-  const connectDeviceApi = useDataApi(
-    deviceService.connectStore.bind(deviceService)
-  );
+  const connectDeviceApi = useDataApi(deviceService.connectStore);
   const connectDevice =
     connectDeviceApi.call as typeof deviceService.connectStore;
 
   const onSubmit = async (values: StoreDTO) => {
     const { image, ..._data } = values;
-    const newStore = await updateItem(
+    if (!image) {
+      await deleteFileApi.call({
+        id: data.id,
+        type: 'STORE'
+      });
+    }
+    const newStore = await updateStoreApi.call(
       getFormData({
         ..._data,
         ...(image &&
           !isValidHttpUrl(image) && {
-            image: dataURLtoFile(image, 'image.png')
+            image: await compressImgApi.call(dataURLtoFile(image, 'image.png'))
           })
       }),
       data.id,
@@ -75,7 +86,12 @@ export const StoreEdit: FC<StoreEdit> = ({
     <StoreForm
       storeTypes={storeTypes}
       data={data}
-      isLoading={isUpdating || connectDeviceApi.isLoading}
+      isLoading={
+        updateStoreApi.isLoading ||
+        connectDeviceApi.isLoading ||
+        deleteFileApi.isLoading ||
+        compressImgApi.isLoading
+      }
       initCityOptions={initCityOptions}
       initDistrictOptions={initDistrictOptions}
       initWardOptions={initWardOptions}

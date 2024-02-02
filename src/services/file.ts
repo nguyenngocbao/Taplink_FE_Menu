@@ -1,12 +1,14 @@
 import { ImageDeleteReq } from '@/types/file';
-import { callApi } from '@/utils/common';
+import { bindMethodsToSelf, callApi } from '@/utils/common';
 
 export const CATEGORY_APIs = {
   INDEX: '/api/v1/files/image'
 };
 
 class FileService {
-  constructor() {}
+  constructor() {
+    bindMethodsToSelf(FileService, this);
+  }
 
   async deleteImage(body: ImageDeleteReq): Promise<any> {
     return callApi(

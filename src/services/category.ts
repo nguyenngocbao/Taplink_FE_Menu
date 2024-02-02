@@ -5,7 +5,7 @@ import {
   CategoryPutReq
 } from '@/types/category';
 import { CRUDAbstract } from '@/types/CRUD';
-import { callApi } from '@/utils/common';
+import { bindMethodsToSelf, callApi } from '@/utils/common';
 
 export const CATEGORY_APIs = {
   INDEX: '/api/v1/categories'
@@ -19,6 +19,7 @@ class CategoryCRUD extends CRUDAbstract<
 > {
   constructor() {
     super(CATEGORY_APIs.INDEX);
+    bindMethodsToSelf(CategoryCRUD, this);
   }
 
   mapDTO(res: CategoryModal): CategoryDTO {

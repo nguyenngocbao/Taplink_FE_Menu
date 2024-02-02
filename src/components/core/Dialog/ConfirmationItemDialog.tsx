@@ -42,16 +42,20 @@ export function ConfirmationItemDialog() {
             <>{desc}</>
           </div>
 
-          <div className="bg-primary-bg p-[15px]">
-            {items.map(item => {
-              return (
-                <Fragment key={String(item.value)}>
-                  <p className="text-[12px]/[19px] font-medium">{item.label}</p>
-                  <p className="font-semibold">{item?.value}</p>
-                </Fragment>
-              );
-            })}
-          </div>
+          {!!items?.length && (
+            <div className="bg-primary-bg p-[15px]">
+              {items.map(item => {
+                return (
+                  <Fragment key={String(item.value)}>
+                    <p className="text-[12px]/[19px] font-medium">
+                      {item.label}
+                    </p>
+                    <p className="font-semibold">{item?.value}</p>
+                  </Fragment>
+                );
+              })}
+            </div>
+          )}
         </div>
         {(cancelBtnText || submitBtnText) && (
           <div className="mt-[20px] flex justify-center gap-[10px]">

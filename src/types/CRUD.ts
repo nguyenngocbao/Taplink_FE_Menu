@@ -1,5 +1,5 @@
 import { revalidateTag } from '@/app/actions';
-import { callApi } from '@/utils/common';
+import { bindMethodsToSelf, callApi } from '@/utils/common';
 
 import { PaginationRes } from '.';
 
@@ -46,6 +46,7 @@ export abstract class CRUDAbstract<
   constructor(prefix: string, isMock?: boolean) {
     this.prefix = prefix;
     this.isMock = isMock;
+    bindMethodsToSelf(CRUDAbstract, this);
   }
 
   abstract mapDTO(res: Modal): DTO;

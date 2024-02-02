@@ -18,9 +18,7 @@ export const SignUp: FC = () => {
   const callbackUrl = query.get('callbackUrl');
   const { t } = useTranslation(['signUp']);
 
-  const { call: signUp, isLoading } = useDataApi(
-    userService.signUp.bind(userService)
-  );
+  const { call: signUp, isLoading } = useDataApi(userService.signUp);
 
   const onSubmit = useCallback(
     async (values: SignupModal) => {

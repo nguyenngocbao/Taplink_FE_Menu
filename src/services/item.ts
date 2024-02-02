@@ -1,7 +1,7 @@
 import { Option, OptionRes } from '@/types';
 import { CRUDAbstract } from '@/types/CRUD';
 import { ItemDTO, ItemModal, ItemPostReq, ItemPutReq } from '@/types/item';
-import { callApi } from '@/utils/common';
+import { bindMethodsToSelf, callApi } from '@/utils/common';
 
 export const ITEM_APIs = {
   INDEX: '/api/v1/items'
@@ -15,6 +15,7 @@ class ItemCRUD extends CRUDAbstract<
 > {
   constructor() {
     super(ITEM_APIs.INDEX);
+    bindMethodsToSelf(ItemCRUD, this);
   }
 
   mapDTO(res: ItemModal): ItemDTO {

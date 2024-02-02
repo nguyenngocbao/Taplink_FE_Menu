@@ -52,13 +52,13 @@ export const StoreForm: FC<StoreFormProps> = memo(
       data: districtOptions,
       isLoading: isLoadingDistrict,
       call: getDistrictOptions
-    } = useDataApi<Option[]>(addressService.getDistricts.bind(addressService));
+    } = useDataApi(addressService.getDistricts);
 
     const {
       data: wardOptions,
       isLoading: isLoadingWard,
       call: getWardOptions
-    } = useDataApi<Option[]>(addressService.getWards.bind(addressService));
+    } = useDataApi(addressService.getWards);
 
     const { t } = useTranslation(['createStore', 'common']);
 

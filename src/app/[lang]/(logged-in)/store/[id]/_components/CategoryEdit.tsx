@@ -4,11 +4,15 @@ import { toast } from 'react-toastify';
 import { useTranslation } from '@/app/i18n/client';
 import { Dialog } from '@/components/core';
 import { CategoryForm } from '@/components/features';
-import { useUpdate } from '@/hooks/features';
+import { useDataApi } from '@/hooks';
 import { categoryService } from '@/services/category';
 import { fileService } from '@/services/file';
 import { CategoryDTO } from '@/types/category';
-import { dataURLtoFile, isValidHttpUrl } from '@/utils/common';
+import {
+  dataURLtoFile,
+  getCompressedImage,
+  isValidHttpUrl
+} from '@/utils/common';
 
 interface CategoryEdit {
   data: CategoryDTO;
@@ -19,26 +23,29 @@ interface CategoryEdit {
 export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
   const { t } = useTranslation('myPage');
 
-  const { updateItem, isUpdating } = useUpdate({ service: categoryService });
+  const updateCategoryApi = useDataApi(categoryService.update);
+  const deleteFileApi = useDataApi(fileService.deleteImage);
+  const compressImgApi = useDataApi(getCompressedImage);
 
   const onSubmit = async (value: CategoryDTO) => {
     if (!value?.image) {
-      fileService.deleteImage({
+      await deleteFileApi.call({
         id: data.id,
         type: 'CATEGORY'
       });
     }
-    await updateItem(
+    await updateCategoryApi.call(
       {
         name: value.name,
         description: value.description,
         templateId: value.templateId,
         storeId: value.storeId,
-        ...(value?.image && {
-          image: isValidHttpUrl(value?.image)
-            ? value?.image
-            : dataURLtoFile(value.image, 'image.png')
-        })
+        ...(value.image &&
+          !isValidHttpUrl(value?.image) && {
+            image: await compressImgApi.call(
+              dataURLtoFile(value.image, 'image.png')
+            )
+          })
       },
       data.id,
       true,
@@ -56,7 +63,11 @@ export const CategoryEdit: FC<CategoryEdit> = ({ isOpen, data, close }) => {
         <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
           <CategoryForm
             data={data}
-            isLoading={isUpdating}
+            isLoading={
+              updateCategoryApi.isLoading ||
+              deleteFileApi.isLoading ||
+              compressImgApi.isLoading
+            }
             onSubmit={onSubmit}
           />
         </div>

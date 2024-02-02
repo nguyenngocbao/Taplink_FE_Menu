@@ -1,7 +1,7 @@
 import { Option, OptionRes } from '@/types';
 import { CRUDAbstract } from '@/types/CRUD';
 import { StoreDTO, StoreModal, StorePostReq, StorePutReq } from '@/types/store';
-import { callApi } from '@/utils/common';
+import { bindMethodsToSelf, callApi } from '@/utils/common';
 
 export const STORE_APIs = {
   INDEX: '/api/v1/stores'
@@ -15,6 +15,7 @@ class StoreCRUD extends CRUDAbstract<
 > {
   constructor() {
     super(STORE_APIs.INDEX);
+    bindMethodsToSelf(StoreCRUD, this);
   }
 
   mapDTO(res: StoreModal): StoreDTO {

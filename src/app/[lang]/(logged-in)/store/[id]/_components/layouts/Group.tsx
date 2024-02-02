@@ -7,8 +7,7 @@ import { useTranslation } from '@/app/i18n/client';
 import { Spinner } from '@/components/core';
 import { GroupImageCard } from '@/components/features';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
-import { useDisclosure } from '@/hooks';
-import { useDelete } from '@/hooks/features';
+import { useDataApi, useDisclosure } from '@/hooks';
 import { categoryService } from '@/services/category';
 import { useDispatch } from '@/stores';
 import {
@@ -38,10 +37,10 @@ export const GroupLayout: FC<GroupLayout> = ({
   const dispatch = useDispatch();
   const { isOpen, open, close } = useDisclosure();
 
-  const { deleteItem, isDeleting } = useDelete({ service: categoryService });
+  const deleteCategoryApi = useDataApi(categoryService.delete);
 
   const removeItem = async (id: number) => {
-    await deleteItem(id);
+    await deleteCategoryApi.call(id);
   };
 
   return (
@@ -98,7 +97,7 @@ export const GroupLayout: FC<GroupLayout> = ({
       {isOwner && (
         <CategoryEdit isOpen={isOpen} data={selectedCate} close={close} />
       )}
-      {isDeleting && <Spinner isCenter />}
+      {deleteCategoryApi.isLoading && <Spinner isCenter />}
     </>
   );
 };

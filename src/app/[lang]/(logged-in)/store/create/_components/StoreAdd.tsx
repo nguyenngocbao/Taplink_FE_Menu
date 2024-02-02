@@ -8,12 +8,16 @@ import { useTranslation } from '@/app/i18n/client';
 import { StoreForm } from '@/components/features';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi } from '@/hooks';
-import { useCreate } from '@/hooks/features';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 import { Option } from '@/types';
 import { StoreDTO } from '@/types/store';
-import { dataURLtoFile, getFormData, isValidHttpUrl } from '@/utils/common';
+import {
+  dataURLtoFile,
+  getCompressedImage,
+  getFormData,
+  isValidHttpUrl
+} from '@/utils/common';
 
 interface StoreAdd {
   cityOptions: Option[];
@@ -26,25 +30,25 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
   const deviceId = query.get('device_id');
   const { t } = useTranslation('myPage');
 
-  const { createItem, isCreating } = useCreate({ service: storeService });
+  const createStoreApi = useDataApi(storeService.create);
+  const compressImgApi = useDataApi(getCompressedImage);
 
-  const connectDeviceApi = useDataApi(
-    deviceService.connectStore.bind(deviceService)
-  );
+  const connectDeviceApi = useDataApi(deviceService.connectStore);
   const connectDevice =
     connectDeviceApi.call as typeof deviceService.connectStore;
 
   const onSubmit = useCallback(
     async (values: StoreDTO) => {
       const { image, ...data } = values;
-      const newStore = await createItem(
+      const newStore = await createStoreApi.call(
         getFormData({
           ...data,
-          ...(image && {
-            image: isValidHttpUrl(image)
-              ? image
-              : dataURLtoFile(image, 'image.png')
-          })
+          ...(image &&
+            !isValidHttpUrl(image) && {
+              image: await compressImgApi.call(
+                dataURLtoFile(image, 'image.png')
+              )
+            })
         }),
         false,
         {
@@ -69,7 +73,11 @@ export const StoreAdd: FC<StoreAdd> = ({ cityOptions, storeTypes }) => {
     <StoreForm
       storeTypes={storeTypes}
       data={null}
-      isLoading={isCreating || connectDeviceApi.isLoading}
+      isLoading={
+        createStoreApi.isLoading ||
+        connectDeviceApi.isLoading ||
+        compressImgApi.isLoading
+      }
       initCityOptions={cityOptions}
       onSubmit={onSubmit}
     />

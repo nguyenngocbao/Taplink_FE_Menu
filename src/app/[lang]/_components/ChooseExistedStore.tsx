@@ -12,8 +12,6 @@ import { STORE_OWNER_ROUTE } from '@/constants/routes';
 import { useDataApi, useDisclosure } from '@/hooks';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
-import { PaginationRes } from '@/types';
-import { StoreDTO } from '@/types/store';
 import { mergeQueryParams } from '@/utils/common';
 
 import { SearchIcon } from './SearchIcon';
@@ -32,12 +30,8 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
   const { data } = useSession();
   const userId = data?.user?.id;
 
-  const getStore = useDataApi<PaginationRes<StoreDTO>>(
-    storeService.list.bind(storeService)
-  );
-  const connectDevice = useDataApi(
-    deviceService.connectStore.bind(deviceService)
-  );
+  const getStore = useDataApi(storeService.list);
+  const connectDevice = useDataApi(deviceService.connectStore);
 
   const onSearchByKeyword = (e?: FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();

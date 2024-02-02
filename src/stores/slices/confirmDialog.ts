@@ -6,7 +6,7 @@ export interface ConfirmDialogState {
   isOpen?: boolean;
   title: string;
   desc: React.ReactElement | string;
-  items: Option[];
+  items?: Option[];
   cancelBtnText?: string;
   submitBtnText?: string;
   callback?: (() => void) | null;

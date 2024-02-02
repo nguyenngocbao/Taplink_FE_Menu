@@ -2,7 +2,7 @@ import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
 import { Option } from '@/types';
 import { CityModal, DistrictModal, WardModal } from '@/types/address';
-import { isOnServer } from '@/utils/common';
+import { bindMethodsToSelf, isOnServer } from '@/utils/common';
 
 export const ADDRESS_APIs = {
   CITY: '/api/v1/cities',
@@ -10,6 +10,9 @@ export const ADDRESS_APIs = {
 };
 
 class AddressService {
+  constructor() {
+    bindMethodsToSelf(AddressService, this);
+  }
   mapDTO(res: CityModal | DistrictModal): Option {
     if (!res) return null;
     const dto: Option = {

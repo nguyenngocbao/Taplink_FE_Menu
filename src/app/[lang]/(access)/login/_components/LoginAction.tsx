@@ -32,7 +32,7 @@ export const LoginAction = () => {
   const LIMITED_SECONDS = 6;
   const [limitedSeconds, setLimitedSeconds] = useState(LIMITED_SECONDS);
 
-  const sendOTPStore = useDataApi(authService.sendOTP.bind(authService));
+  const sendOTPStore = useDataApi(authService.sendOTP);
   const loginStore = useLogin<VerifyOtpRequest>({
     callbackUrl: callbackUrl ?? STORE_OWNER_ROUTE.HOME,
     successMessage: t('loginSuccess')

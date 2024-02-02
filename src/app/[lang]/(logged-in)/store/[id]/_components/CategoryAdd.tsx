@@ -8,11 +8,10 @@ import { useTranslation } from '@/app/i18n/client';
 import PlusBlack from '@/assets/icon/plus-black.svg';
 import { Dialog } from '@/components/core';
 import { CategoryForm } from '@/components/features';
-import { useDisclosure } from '@/hooks';
-import { useCreate } from '@/hooks/features';
+import { useDataApi, useDisclosure } from '@/hooks';
 import { categoryService } from '@/services/category';
 import { CategoryDTO } from '@/types/category';
-import { dataURLtoFile } from '@/utils/common';
+import { dataURLtoFile, getCompressedImage } from '@/utils/common';
 
 interface CategoryAdd {
   storeId: string;
@@ -22,15 +21,18 @@ export const CategoryAdd: FC<CategoryAdd> = ({ storeId }) => {
   const { isOpen, open, close } = useDisclosure();
   const { t } = useTranslation('myPage');
 
-  const { createItem, isCreating } = useCreate({ service: categoryService });
+  const createCategoryApi = useDataApi(categoryService.create);
+  const compressImgApi = useDataApi(getCompressedImage);
 
   const onSubmit = useCallback(async (value: CategoryDTO) => {
-    await createItem(
+    await createCategoryApi.call(
       {
         name: value.name,
         description: value.description,
         ...(value?.image && {
-          image: dataURLtoFile(value.image, 'image.png')
+          image: await compressImgApi.call(
+            dataURLtoFile(value.image, 'image.png')
+          )
         }),
         storeId: Number(storeId)
       },
@@ -56,7 +58,10 @@ export const CategoryAdd: FC<CategoryAdd> = ({ storeId }) => {
       </button>
       <Dialog title={t('addCategory')} isOpen={isOpen} onClose={close}>
         <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[2px] text-left">
-          <CategoryForm isLoading={isCreating} onSubmit={onSubmit} />
+          <CategoryForm
+            isLoading={createCategoryApi.isLoading || compressImgApi.isLoading}
+            onSubmit={onSubmit}
+          />
         </div>
       </Dialog>
     </>

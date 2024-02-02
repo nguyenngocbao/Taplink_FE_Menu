@@ -1,13 +1,16 @@
 import axios from '@/lib/axios';
 import fetchServer from '@/lib/fetch-server';
 import { SignupModal } from '@/types/user';
-import { isOnServer } from '@/utils/common';
+import { bindMethodsToSelf, isOnServer } from '@/utils/common';
 
 export const USER_APIs = {
   SIGN_UP: '/api/v1/users/signup'
 };
 
 class UserService {
+  constructor() {
+    bindMethodsToSelf(UserService, this);
+  }
   async signUp(body: SignupModal): Promise<unknown> {
     let res = null;
 

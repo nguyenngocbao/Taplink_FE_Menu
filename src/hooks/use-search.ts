@@ -2,47 +2,44 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { useDataApi } from '@/hooks';
-import { PaginationRes, PaginationSearchParams, SortOrder } from '@/types';
-import { ID, useCRUDServiceProps } from '@/types/CRUD';
 import {
+  filterEmptyParams,
   isOnServer,
   queryStringToObject,
   updateUrlWithParams
 } from '@/utils/common';
 
-interface useGetListProps<
-  DTO extends { id?: ID } = { id?: ID },
-  Modal = DTO,
-  CreateReqPayload = Modal,
-  UpdateReqPayload = CreateReqPayload
-> extends useCRUDServiceProps<DTO, Modal, CreateReqPayload, UpdateReqPayload> {
+interface useSearchProps<
+  F extends (params: any, ...rest: any[]) => Promise<any> = any
+> {
   useQueryParams?: boolean;
-  initialParams: Record<string, unknown> & {
-    limit?: number;
-    sort?: Partial<Record<keyof Modal, SortOrder>>;
-  };
+  initialParams?: Parameters<F>[0];
+  initialRestParams?: F extends (
+    params: any,
+    ...rest: infer Rest
+  ) => Promise<any>
+    ? Rest
+    : never;
   enable?: boolean;
+  func: F;
 }
 
-export const useList = <
-  SearchParams extends Modal & PaginationSearchParams,
-  DTO extends { id?: ID },
-  Modal = DTO,
-  CreateReqPayload = Modal,
-  UpdateReqPayload = CreateReqPayload
+export const useSearch = <
+  F extends (params: any, ...rest: any[]) => Promise<any>
 >({
-  service,
+  func,
   useQueryParams = true,
   initialParams,
+  initialRestParams = [] as any,
   enable = true
-}: useGetListProps<DTO, Modal, CreateReqPayload, UpdateReqPayload>) => {
+}: useSearchProps<F>) => {
   const sp = useSearchParams();
-  const limit = initialParams.limit ?? 10;
-  const initialQueryParams = (
-    isOnServer() ? {} : queryStringToObject(sp.toString())
-  ) as SearchParams;
+  const limit = initialParams?.limit ?? 10;
+  const initialQueryParams = isOnServer()
+    ? {}
+    : queryStringToObject(sp.toString());
 
-  const searchParams = useRef(
+  const searchParams = useRef<Parameters<F>[0]>(
     useQueryParams
       ? {
           ...initialQueryParams,
@@ -59,27 +56,26 @@ export const useList = <
   );
 
   const page = useRef(searchParams.current.page);
-  const [sort, setSort] = useState<Partial<Record<keyof Modal, SortOrder>>>(
-    searchParams.current.sort
-  );
+  const [sort, setSort] = useState(searchParams.current.sort);
 
-  const listApi = useDataApi<PaginationRes<DTO>>(service.list.bind(service));
-  const getList = listApi.call as typeof service.list;
+  const listApi = useDataApi(func);
 
   useEffect(() => {
     if (enable) {
       const newParams = { ...searchParams.current, limit: limit, sort: sort };
       useQueryParams && updateUrlWithParams(newParams);
-      getList(newParams);
+      listApi.call(newParams, initialRestParams);
     }
   }, [useQueryParams, sort, limit, enable]);
 
-  const onSearch = async (values?: SearchParams) => {
+  const onSearch = async (
+    values?: Parameters<F>[0],
+    ...rest: typeof initialRestParams
+  ) => {
     page.current = 1;
-
-    const newParams = { ...searchParams.current, ...values, page: 1 };
+    const newParams = { ...(values ? values : searchParams.current), page: 1 };
     useQueryParams && updateUrlWithParams(newParams);
-    getList(newParams);
+    listApi.call(filterEmptyParams(newParams), ...(rest ?? initialRestParams));
     searchParams.current = newParams;
   };
 
@@ -88,7 +84,7 @@ export const useList = <
 
     const newParams = { ...searchParams.current, page: index };
     useQueryParams && updateUrlWithParams(newParams);
-    getList(newParams);
+    listApi.call(newParams, ...initialRestParams);
     searchParams.current = newParams;
   };
 
@@ -97,11 +93,12 @@ export const useList = <
     data: listApi.data,
     setData: listApi.setData,
     sort,
+    error: listApi.error,
     pageIndex: Number(page.current),
     isInitialLoading: listApi.count === 0,
     searchParams: searchParams.current,
     setSort,
-    getList,
+    getList: listApi.call,
     onSearch,
     onChangePage
   };

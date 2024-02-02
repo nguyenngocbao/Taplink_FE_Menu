@@ -48,10 +48,13 @@ export const GroupImageCard: FC<GroupImageCard> = ({
         />
         <Menu
           as="div"
-          className="absolute right-0 top-[7px] inline-block h-[20px] w-[20px]"
+          className="absolute right-0 top-0 inline-block h-[30px] w-[30px]"
         >
-          <Menu.Button className="edit-btn flex items-center justify-center">
-            <Image src={ThreeDot} alt="" />
+          <Menu.Button
+            data-custom-ignore
+            className="edit-btn flex h-full w-full items-center justify-center"
+          >
+            <Image data-custom-ignore src={ThreeDot} alt="" />
           </Menu.Button>
           <Transition
             as={Fragment}

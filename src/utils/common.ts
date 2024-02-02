@@ -1,6 +1,7 @@
 import querystring from 'querystring';
 
 import { Method } from 'axios';
+import imageCompression from 'browser-image-compression';
 import clsx, { ClassValue } from 'clsx';
 import { toast } from 'react-toastify';
 import { twMerge } from 'tailwind-merge';
@@ -66,7 +67,7 @@ export function download(filename, text) {
     'data:text/csv;charset=shift_jis,' + encodeURI(text)
   );
 
-  element.setAttribute('custom-ignore', 'true');
+  element.setAttribute('data-custom-ignore', 'true');
 
   element.setAttribute('download', filename);
 
@@ -309,6 +310,16 @@ export const getQueryParam = key => {
   return query.get(key);
 };
 
+export const filterEmptyParams = params => {
+  const trimedParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([, value]) => value !== '' && value !== undefined
+    )
+  );
+
+  return trimedParams;
+};
+
 export function blobToBase64(blob): Promise<string> {
   return new Promise(resolve => {
     const reader = new FileReader();
@@ -330,3 +341,50 @@ export function dataURLtoFile(dataurl, filename) {
   }
   return new File([u8arr], filename, { type: mime });
 }
+
+export function bindMethodsToSelf(
+  objClass,
+  context,
+  otherMethodsToIgnore = []
+) {
+  const self = context;
+  Object.getOwnPropertyNames(objClass.prototype).forEach(method => {
+    //skip constructor, render and any overrides of lifecycle methods
+    if (
+      method.startsWith('component') ||
+      method === 'constructor' ||
+      method === 'render'
+    )
+      return;
+    //any other methods you don't want bound to self
+    if (otherMethodsToIgnore.indexOf(method) > -1) return;
+    //bind all other methods to class instance
+    self[method] = self[method].bind(self);
+  });
+}
+
+export const getCompressedImage = async (
+  file: File,
+  limit = Number(process.env.NEXT_PUBLIC_FILE_LIMIT_SIZE_MB ?? 1)
+) => {
+  const options = {
+    maxSizeMB: limit,
+    useWebWorker: true
+  };
+  if (['image/gif', 'image/webp'].includes(file.type)) {
+    return file;
+  }
+  const compressionImage = await imageCompression(file, options);
+  return blobToFile(compressionImage, file.name ?? 'image.png');
+};
+
+export const blobToFile = (theBlob: Blob, fileName: string): File => {
+  return new File(
+    [theBlob as any], // cast as any
+    fileName,
+    {
+      lastModified: new Date().getTime(),
+      type: theBlob.type
+    }
+  );
+};
