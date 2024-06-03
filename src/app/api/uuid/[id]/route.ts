@@ -6,6 +6,8 @@ import { getServerSession } from '@/lib/auth';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 
+const FE_SERVER_URL = process.env.NEXT_PUBLIC_NEXT_SERVER_URL;
+
 export async function GET(
   request: NextRequestWithAuth,
   { params }: { params: { id: string } }
@@ -16,7 +18,9 @@ export async function GET(
     const { storeId } = await deviceService.get(id);
     if (storeId) {
       return NextResponse.redirect(
-        `${request.nextUrl.origin}/${STORE_OWNER_ROUTE.STORE}/${storeId}`
+        `${FE_SERVER_URL ?? request.nextUrl.origin}/${
+          STORE_OWNER_ROUTE.STORE
+        }/${storeId}`
       );
     }
   } catch (e) {
@@ -26,15 +30,19 @@ export async function GET(
 
       if (hasStore) {
         return NextResponse.redirect(
-          `${request.nextUrl.origin}?device_id=${id}`
+          `${FE_SERVER_URL ?? request.nextUrl.origin}?device_id=${id}`
         );
       }
       return NextResponse.redirect(
-        `${request.nextUrl.origin}/${STORE_OWNER_ROUTE.CREATE_STORE}?device_id=${id}`
+        `${FE_SERVER_URL ?? request.nextUrl.origin}/${
+          STORE_OWNER_ROUTE.CREATE_STORE
+        }?device_id=${id}`
       );
     } else {
       return NextResponse.redirect(
-        `${request.nextUrl.origin}/${STORE_OWNER_ROUTE.LOGIN}?callbackUrl=${STORE_OWNER_ROUTE.CREATE_STORE}?device_id=${id}`
+        `${FE_SERVER_URL ?? request.nextUrl.origin}/${
+          STORE_OWNER_ROUTE.LOGIN
+        }?callbackUrl=${STORE_OWNER_ROUTE.CREATE_STORE}?device_id=${id}`
       );
     }
   }
