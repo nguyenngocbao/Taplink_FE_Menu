@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  nextjs:
+    image: taplink-menu-fe-app
+    build: .
+    ports:
+      - "7555:3000"
+    environment:
+      - PORT=3000
