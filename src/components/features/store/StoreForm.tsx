@@ -138,7 +138,8 @@ export const StoreForm: FC<StoreFormProps> = memo(
                   disabled={!isEditable}
                   placeholder={t('storeTypePlaceholder')}
                   registration={register('storeTypeId', {
-                    value: data?.storeTypeId
+                    value: data?.storeTypeId,
+                    valueAsNumber: true
                   })}
                 ></SelectField>
 
@@ -166,7 +167,8 @@ export const StoreForm: FC<StoreFormProps> = memo(
                     disabled={!isEditable}
                     placeholder={t('provinceCityPlaceholder')}
                     registration={register('cityId', {
-                      value: data?.cityId ?? ''
+                      value: data?.cityId ?? '',
+                      valueAsNumber: true
                     })}
                   ></SelectField>
                   <SelectField
@@ -177,7 +179,8 @@ export const StoreForm: FC<StoreFormProps> = memo(
                     disabled={!isEditable || !getValues('cityId')}
                     placeholder={t('districtPlaceholder')}
                     registration={register('districtId', {
-                      value: data?.districtId ?? ''
+                      value: data?.districtId ?? '',
+                      valueAsNumber: true
                     })}
                   ></SelectField>
                   <SelectField
@@ -188,7 +191,8 @@ export const StoreForm: FC<StoreFormProps> = memo(
                     disabled={!isEditable || !getValues('districtId')}
                     placeholder={t('wardPlaceholder')}
                     registration={register('wardId', {
-                      value: data?.wardId ?? ''
+                      value: data?.wardId ?? '',
+                      valueAsNumber: true
                     })}
                   ></SelectField>
 
