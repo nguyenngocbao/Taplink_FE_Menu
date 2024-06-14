@@ -14,7 +14,9 @@ class DeviceService {
   async connectStore(body: ConnectStoreReqPayload): Promise<unknown> {
     let res = null;
     if (isOnServer()) {
-      res = await fetchServer(DEVICE_APIs.INDEX, 'POST', { body });
+      res = await fetchServer(DEVICE_APIs.INDEX, 'POST', {
+        body: JSON.stringify(body)
+      });
     } else {
       res = await axios.post(DEVICE_APIs.INDEX, body);
     }

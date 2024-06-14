@@ -18,7 +18,7 @@ class AuthService {
 
     if (isOnServer()) {
       res = await fetchServer(AUTH_APIs.VERIFY_OTP, 'POST', {
-        body: body
+        body: JSON.stringify(body)
       });
     } else {
       res = await axios.post(AUTH_APIs.VERIFY_OTP, {
@@ -34,7 +34,7 @@ class AuthService {
 
     if (isOnServer()) {
       res = await fetchServer(AUTH_APIs.SEND_OTP, 'POST', {
-        body: body
+        body: JSON.stringify(body)
       });
     } else {
       res = await axios.post(AUTH_APIs.SEND_OTP, body);

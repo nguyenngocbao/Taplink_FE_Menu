@@ -73,7 +73,7 @@ export default async function RootLayout({
         <ProgressBar />
         <WrappedToast />
         <AuthProvider>
-          <AuthClientSetup session={session} />
+          <AuthClientSetup initialSession={session} />
           <ReduxProvider>
             <ConfirmationItemDialog />
             <Header />

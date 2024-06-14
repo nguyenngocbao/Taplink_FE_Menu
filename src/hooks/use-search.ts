@@ -62,6 +62,7 @@ export const useSearch = <
 
   useEffect(() => {
     if (enable) {
+      searchParams.current = { ...initialParams, ...searchParams.current };
       const newParams = { ...searchParams.current, limit: limit, sort: sort };
       useQueryParams && updateUrlWithParams(newParams);
       listApi.call(newParams, initialRestParams);

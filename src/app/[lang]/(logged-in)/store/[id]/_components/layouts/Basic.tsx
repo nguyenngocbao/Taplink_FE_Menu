@@ -44,7 +44,9 @@ export const BasicLayout: FC<BasicLayout> = ({
 
   const query = useSearchParams();
   const { t } = useTranslation(['myPage', 'common']);
-  const categoryId = Number(query.get('categoryId') ?? categories[0]?.id);
+
+  const rawCategoryId = query.get('categoryId') ?? categories[0]?.id;
+  const categoryId = rawCategoryId ? Number(rawCategoryId) : null;
 
   const {
     items,
@@ -86,87 +88,91 @@ export const BasicLayout: FC<BasicLayout> = ({
           })}
         </div>
 
-        {isOwner && (
-          <SelectField
-            onChange={onChangeMenuTemplate}
-            options={menuTemplates}
-            value={String(selectedTemplate)}
-            label={t('menuTemplate')}
-          ></SelectField>
-        )}
-
-        <ItemList
-          items={items}
-          isEditable={isOwner}
-          selectedTemplate={selectedTemplate}
-          isInitialLoading={isInitialLoading}
-          onEdit={item => {
-            setSelectedItem(item);
-            open();
-          }}
-          onDelete={item => {
-            dispatch(
-              showConfirmDialog({
-                title: t('label.confirmDelete', { ns: 'common' }),
-                desc: t('confirmDeleteItem'),
-                items: [
-                  {
-                    label: t('itemName'),
-                    value: item.name
-                  }
-                ],
-                action: 'delete',
-                submitBtnText: t('label.submit', { ns: 'common' }),
-                async callback() {
-                  await removeItem(item.id);
-                  await getListItem({ categoryId: categoryId });
-                  dispatch(hideConfirmDialog());
-                }
-              })
-            );
-          }}
-        />
-
-        {isOwner && (
+        {categoryId && (
           <>
-            <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
-              <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
-                <ItemForm
-                  onSubmit={async (newItem: ItemDTO) => {
-                    try {
-                      const action = selectedItem ? editItem : addItem;
-                      await action(newItem);
-                      getListItem({ categoryId: categoryId });
-                      close();
-                    } catch (e) {
-                      console.log(e);
-                    }
-                  }}
-                  data={selectedItem}
-                  isLoading={isCreating || isLoading || isUpdating}
-                  categories={categories}
-                  priceTypes={priceTypes}
-                  imageAspect={imageAspect}
-                />
-              </div>
-            </Dialog>
-            <button
-              onClick={() => {
-                if (!categories.length) {
-                  toast.info(t('noCategories'));
-                  return;
-                }
-                setSelectedItem(null);
+            {isOwner && (
+              <SelectField
+                onChange={onChangeMenuTemplate}
+                options={menuTemplates}
+                value={String(selectedTemplate)}
+                label={t('menuTemplate')}
+              ></SelectField>
+            )}
+
+            <ItemList
+              items={items}
+              isEditable={isOwner}
+              selectedTemplate={selectedTemplate}
+              isInitialLoading={isInitialLoading}
+              onEdit={item => {
+                setSelectedItem(item);
                 open();
               }}
-              style={{
-                bottom: '16px',
-                right: '16px'
+              onDelete={item => {
+                dispatch(
+                  showConfirmDialog({
+                    title: t('label.confirmDelete', { ns: 'common' }),
+                    desc: t('confirmDeleteItem'),
+                    items: [
+                      {
+                        label: t('itemName'),
+                        value: item.name
+                      }
+                    ],
+                    action: 'delete',
+                    submitBtnText: t('label.submit', { ns: 'common' }),
+                    async callback() {
+                      await removeItem(item.id);
+                      await getListItem({ categoryId: categoryId });
+                      dispatch(hideConfirmDialog());
+                    }
+                  })
+                );
               }}
-              className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
-            >
-              <Image src={PlusWhite} alt="" />
-            </button>
+            />
+
+            {isOwner && (
+              <>
+                <Dialog title={t('addItem')} isOpen={isOpen} onClose={close}>
+                  <div className="no-scrollbar h-[calc(100vh_-_140px)] w-[calc(100vw_-_64px)] overflow-y-auto px-[1px] text-left">
+                    <ItemForm
+                      onSubmit={async (newItem: ItemDTO) => {
+                        try {
+                          const action = selectedItem ? editItem : addItem;
+                          await action(newItem);
+                          getListItem({ categoryId: categoryId });
+                          close();
+                        } catch (e) {
+                          console.log(e);
+                        }
+                      }}
+                      data={selectedItem}
+                      isLoading={isCreating || isLoading || isUpdating}
+                      categories={categories}
+                      priceTypes={priceTypes}
+                      imageAspect={imageAspect}
+                    />
+                  </div>
+                </Dialog>
+                <button
+                  onClick={() => {
+                    if (!categories.length) {
+                      toast.info(t('noCategories'));
+                      return;
+                    }
+                    setSelectedItem(null);
+                    open();
+                  }}
+                  style={{
+                    bottom: '16px',
+                    right: '16px'
+                  }}
+                  className="fixed bottom-[16px] right-[16px] flex h-[56px] w-[56px] items-center justify-center rounded-[10px] bg-primary"
+                >
+                  <Image src={PlusWhite} alt="" />
+                </button>
+              </>
+            )}
           </>
         )}
       </div>

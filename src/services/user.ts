@@ -16,7 +16,7 @@ class UserService {
 
     if (isOnServer()) {
       res = await fetchServer(USER_APIs.SIGN_UP, 'POST', {
-        body: body
+        body: JSON.stringify(body)
       });
     } else {
       res = await axios.post(USER_APIs.SIGN_UP, body);

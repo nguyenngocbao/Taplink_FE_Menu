@@ -36,41 +36,37 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
   const { data, isInitialLoading, isLoading, getList } = useSearch({
     func: itemService.list,
     useQueryParams: false,
-    initialParams: {
-      categoryId: String(categoryId)
-    },
+    initialParams: useMemo(
+      () => (categoryId ? { categoryId } : {}),
+      [categoryId]
+    ),
     enable: !!categoryId
   });
   const selectedCate = categories.find(c => c.id === categoryId);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(
-    selectedCate.templateId ?? MenuTemplate.DrinkImage
+    selectedCate?.templateId ?? MenuTemplate.DrinkImage
   );
 
   const items = (data?.content ?? []).sort((a, b) => a.id - b.id);
 
   const addItem = async (values: ItemDTO) => {
     const { image, ...data } = values;
-    try {
-      await createItemApi.call(
-        getFormData({
-          ...data,
-          ...(image && {
-            image: await compressImgApi.call(dataURLtoFile(image, 'image.jpg'))
-          }),
-          priceInfo: JSON.stringify(values.priceInfo)
+    await createItemApi.call(
+      getFormData({
+        ...data,
+        ...(image && {
+          image: await compressImgApi.call(dataURLtoFile(image, 'image.jpg'))
         }),
-        true,
-        {
-          'content-type': 'multipart/form-data'
-        }
-      );
-      toast.success(t('createItemSuccess'));
-      await getList({ categoryId: categoryId });
-      close();
-    } catch (e) {
-      console.log(e);
-    }
+        priceInfo: JSON.stringify(values.priceInfo)
+      }),
+      true,
+      {
+        'content-type': 'multipart/form-data'
+      }
+    );
+    toast.success(t('createItemSuccess'));
+    await getList({ categoryId: categoryId });
   };
 
   const removeItem = async (id: number) => {
@@ -83,34 +79,30 @@ export const useItem = ({ t, store, categoryId, categories }: useItemProps) => {
   };
 
   const editItem = async (values: ItemDTO) => {
-    try {
-      if (!values?.image) {
-        await deleteFileApi.call({
-          id: values.id,
-          type: 'MENU_ITEM'
-        });
-      }
-      await updateItemApi.call(
-        getFormData({
-          id: values.id,
-          name: values.name,
-          ...(values.image &&
-            !isValidHttpUrl(values?.image) && {
-              image: await compressImgApi.call(
-                dataURLtoFile(values.image, 'image.png')
-              )
-            }),
-          description: values.description,
-          categoryId: values.categoryId,
-          priceTypeId: values.priceTypeId,
-          priceInfo: JSON.stringify(values.priceInfo)
-        }),
-        values.id
-      );
-      toast.success(t('updateItemSuccess'));
-    } catch (e) {
-      console.log(e);
+    if (!values?.image) {
+      await deleteFileApi.call({
+        id: values.id,
+        type: 'MENU_ITEM'
+      });
     }
+    await updateItemApi.call(
+      getFormData({
+        id: values.id,
+        name: values.name,
+        ...(values.image &&
+          !isValidHttpUrl(values?.image) && {
+            image: await compressImgApi.call(
+              dataURLtoFile(values.image, 'image.png')
+            )
+          }),
+        description: values.description,
+        categoryId: values.categoryId,
+        priceTypeId: values.priceTypeId,
+        priceInfo: JSON.stringify(values.priceInfo)
+      }),
+      values.id
+    );
+    toast.success(t('updateItemSuccess'));
   };
 
   const onChangeMenuTemplate = id => {

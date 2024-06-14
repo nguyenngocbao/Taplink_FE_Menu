@@ -6,7 +6,14 @@ import { signOut, useSession } from 'next-auth/react';
 import { FAILLBACK_ROUTES } from '@/constants/auth';
 import axios from '@/lib/axios';
 
-export const AuthClientSetup = ({ session }: { session: Session }) => {
+export const AuthClientSetup = ({
+  initialSession
+}: {
+  initialSession: Session;
+}) => {
+  const { data: currentSession } = useSession();
+  const session = currentSession ?? initialSession;
+
   // setup axios
   axios.defaults.headers['Accept'] = 'application/json';
 
