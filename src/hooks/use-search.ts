@@ -34,7 +34,7 @@ export const useSearch = <
   enable = true
 }: useSearchProps<F>) => {
   const sp = useSearchParams();
-  const limit = initialParams?.limit ?? 10;
+  const pageSize = initialParams?.pageSize ?? 10;
   const initialQueryParams = isOnServer()
     ? {}
     : queryStringToObject(sp.toString());
@@ -43,47 +43,56 @@ export const useSearch = <
     useQueryParams
       ? {
           ...initialQueryParams,
-          page: Number(initialQueryParams.page ?? 1),
+          pageNo: Number(initialQueryParams.pageNo ?? 0),
           ...(initialQueryParams.sort && {
             sort: initialQueryParams.sort
           }),
           ...initialParams
         }
       : {
-          page: 1,
+          pageNo: 0,
           ...initialParams
         }
   );
 
-  const page = useRef(searchParams.current.page);
+  const pageNo = useRef(searchParams.current.pageNo);
   const [sort, setSort] = useState(searchParams.current.sort);
 
   const listApi = useDataApi(func);
 
   useEffect(() => {
     if (enable) {
+      searchParams.current = { ...searchParams.current, ...initialParams };
+    }
+  }, [enable]);
+
+  useEffect(() => {
+    if (enable) {
       searchParams.current = { ...initialParams, ...searchParams.current };
-      const newParams = { ...searchParams.current, limit: limit, sort: sort };
+      const newParams = { ...searchParams.current, pageSize, sort: sort };
       useQueryParams && updateUrlWithParams(newParams);
       listApi.call(newParams, initialRestParams);
     }
-  }, [useQueryParams, sort, limit, enable]);
+  }, [useQueryParams, sort, pageSize, enable]);
 
   const onSearch = async (
     values?: Parameters<F>[0],
     ...rest: typeof initialRestParams
   ) => {
-    page.current = 1;
-    const newParams = { ...(values ? values : searchParams.current), page: 1 };
+    pageNo.current = 0;
+    const newParams = {
+      ...(values ? values : searchParams.current),
+      pageNo: 0
+    };
     useQueryParams && updateUrlWithParams(newParams);
     listApi.call(filterEmptyParams(newParams), ...(rest ?? initialRestParams));
     searchParams.current = newParams;
   };
 
   const onChangePage = (index: number) => {
-    page.current = index;
+    pageNo.current = index;
 
-    const newParams = { ...searchParams.current, page: index };
+    const newParams = { ...searchParams.current, pageNo: index };
     useQueryParams && updateUrlWithParams(newParams);
     listApi.call(newParams, ...initialRestParams);
     searchParams.current = newParams;
@@ -95,7 +104,7 @@ export const useSearch = <
     setData: listApi.setData,
     sort,
     error: listApi.error,
-    pageIndex: Number(page.current),
+    pageNo: Number(pageNo.current),
     isInitialLoading: listApi.count === 0,
     searchParams: searchParams.current,
     setSort,

@@ -1,15 +1,16 @@
 'use client';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useTranslation } from '@/app/i18n/client';
 import MarkerIcon from '@/assets/image/marker.png';
-import { Button, Dialog, InputField } from '@/components/core';
+import { Button, Dialog, InputField, Spinner } from '@/components/core';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
-import { useDataApi, useDisclosure } from '@/hooks';
+import { useDataApi, useDisclosure, useSearch } from '@/hooks';
 import { deviceService } from '@/services/device';
 import { storeService } from '@/services/store';
 import { mergeQueryParams } from '@/utils/common';
@@ -17,7 +18,13 @@ import { mergeQueryParams } from '@/utils/common';
 import { SearchIcon } from './SearchIcon';
 import { StoreItem, StoreItemSkeleton } from './StoreItem';
 
-export const ChooseExistedStore = ({ isInitialOpen }) => {
+export const ChooseExistedStore = ({
+  isInitialOpen,
+  initialSession
+}: {
+  isInitialOpen: boolean;
+  initialSession: Session;
+}) => {
   const query = useSearchParams();
   const deviceId = query.get('device_id');
 
@@ -25,18 +32,43 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
   const { isOpen, open, close } = useDisclosure(isInitialOpen);
   const [keyword, setKeyword] = useState('');
   const [selectedStoreId, setSelectedStoreId] = useState(null);
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const { data } = useSession();
-  const userId = data?.user?.id;
+  const { data: _session, status } = useSession();
+  const session = _session ?? initialSession;
 
-  const getStore = useDataApi(storeService.list);
+  const router = useRouter();
+  const userId = session?.user?.id;
+  const role = session?.user?.role;
   const connectDevice = useDataApi(deviceService.connectStore);
+
+  const {
+    data,
+    isLoading,
+    isInitialLoading,
+    searchParams,
+    onChangePage,
+    onSearch
+  } = useSearch({
+    func: role === 'admin' ? storeService.getStoresForAdmin : storeService.list,
+    useQueryParams: false,
+    initialParams: { userId },
+    enable: !!userId
+  });
+
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    setList(pre =>
+      searchParams.pageNo === 0
+        ? data?.content ?? []
+        : [...pre, ...(data?.content ?? [])]
+    );
+  }, [data]);
 
   const onSearchByKeyword = (e?: FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     setSelectedStoreId(null);
-    getStore.call({ searchKey: keyword, userId: userId });
+    setList([]);
+    onSearch({ searchKey: keyword, userId: userId });
   };
 
   const onClickNext = async () => {
@@ -71,10 +103,6 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
     }
   };
 
-  useEffect(() => {
-    userId && getStore.call({ userId: userId });
-  }, [userId]);
-
   return (
     <>
       <button
@@ -88,10 +116,10 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
         />
         <div>
           <h2 className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-            {t('hasExistedStore')}
+            {role === 'admin' ? t('storeList') : t('hasExistedStore')}
           </h2>
           <p className="text-[16px]/[22.4px] font-normal text-black">
-            {t('hasExistedStoreDesc')}
+            {role === 'admin' ? t('storeListDesc') : t('hasExistedStoreDesc')}
           </p>
         </div>
       </button>
@@ -104,29 +132,40 @@ export const ChooseExistedStore = ({ isInitialOpen }) => {
             onClickSufixIcon={() => onSearchByKeyword()}
           />
         </form>
-        <div className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col gap-[16px] overflow-scroll p-[2px]">
-          {getStore.isLoading ? (
-            <StoreItemSkeleton length={4} />
-          ) : (
-            <>
-              {(getStore.data?.content ?? [])?.map(store => (
-                <StoreItem
-                  data={store}
-                  key={store.id}
-                  onClick={() => setSelectedStoreId(store.id)}
-                  className={
-                    selectedStoreId === store.id
-                      ? 'shadow-[0_0_0_2px_#1540C3]'
-                      : ''
-                  }
-                />
-              ))}
-              {!getStore.data?.content?.length && (
-                <p className="mt-[10px]">{`${t('noStore')} "${
-                  getStore.params?.[0]?.searchKey
-                }"`}</p>
-              )}
-            </>
+        <div
+          onScroll={e => {
+            const { scrollTop, scrollHeight, clientHeight } =
+              e.target as HTMLDivElement;
+
+            if (scrollTop + clientHeight >= scrollHeight) {
+              if (!data.last && !isLoading) {
+                onChangePage(searchParams.pageNo + 1);
+              }
+            }
+          }}
+          className="no-scrollbar relative flex h-[calc(100vh_-_230px)] w-[calc(100vw_-_64px)] flex-col items-center gap-[16px] overflow-scroll p-[2px]"
+        >
+          {(list ?? [])?.map(store => (
+            <StoreItem
+              data={store}
+              key={store.id}
+              onClick={() => setSelectedStoreId(store.id)}
+              className={
+                selectedStoreId === store.id ? 'shadow-[0_0_0_2px_#1540C3]' : ''
+              }
+            />
+          ))}
+          {isInitialLoading && <StoreItemSkeleton length={4} />}
+          {!list?.length && !isLoading && searchParams?.searchKey && (
+            <p className="mt-[10px]">{`${t('noStore')} "${
+              searchParams?.searchKey
+            }"`}</p>
+          )}
+
+          {!isInitialLoading && isLoading && (
+            <div className="flex h-[40px] w-full shrink-0 justify-center">
+              <Spinner isCenter={false} className="mx-auto" />
+            </div>
           )}
         </div>
         <div className="mt-[10px] flex justify-end gap-[10px]">

@@ -49,6 +49,13 @@ export type PaginationRes<T> = {
   last?: boolean;
 };
 
+export type SearchParams<Res = unknown, Params = unknown> = {
+  pageNo?: number;
+  pageSize?: number;
+  sortBy?: keyof Res;
+  sortDir?: SortOrder;
+} & Params;
+
 export type SIZE = 'lg' | 'md' | 'sm';
 
 export interface Option {

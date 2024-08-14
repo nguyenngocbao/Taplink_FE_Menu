@@ -1,6 +1,6 @@
 import querystring from 'querystring';
 
-import { Method } from 'axios';
+import rootAxios, { Method } from 'axios';
 import imageCompression from 'browser-image-compression';
 import clsx, { ClassValue } from 'clsx';
 import { toast } from 'react-toastify';
@@ -182,9 +182,13 @@ export async function callApi<R>(
   href: string,
   method: Method,
   body?: any,
-  isMock?: boolean,
-  headers?: Record<string, string>,
-  isUseBody?: boolean
+  options?: {
+    isMock?: boolean;
+    headers?: Record<string, string>;
+    noCache?: boolean;
+    noAuth?: boolean;
+    isUseBody?: boolean;
+  }
 ): Promise<R> {
   switch (method) {
     case 'GET':
@@ -192,19 +196,33 @@ export async function callApi<R>(
     case 'DELETE':
     case 'delete':
       if (isOnServer()) {
-        const params = isUseBody ? '' : new URLSearchParams(body);
+        const params = options?.isUseBody ? '' : new URLSearchParams(body);
         return fetchServer(`${href}?${params}`, method, {
           tags: [href],
-          ...(isUseBody && { body }),
-          isMock: isMock,
-          headers: headers
+          isMock: options?.isMock,
+          ...(options?.isUseBody && { body }),
+          headers: options?.headers,
+          noCache: options?.noCache,
+          noAuth: options?.noAuth
         });
       }
 
-      return await axios[method.toLowerCase()](href, {
-        ...(isUseBody ? { data: body } : { params: body }),
-        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
-        ...(headers && { headers: headers })
+      if (options?.noAuth) {
+        rootAxios[method.toLowerCase()](href, {
+          ...(options?.isUseBody ? { data: body } : { params: body }),
+          baseURL: options?.isMock
+            ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL
+            : undefined,
+          ...(options?.headers && { headers: options?.headers })
+        });
+      }
+
+      return axios[method.toLowerCase()](href, {
+        ...(options?.isUseBody ? { data: body } : { params: body }),
+        baseURL: options?.isMock
+          ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL
+          : undefined,
+        ...(options?.headers && { headers: options?.headers })
       });
     case 'POST':
     case 'post':
@@ -213,15 +231,27 @@ export async function callApi<R>(
       if (isOnServer()) {
         return fetchServer(href, method, {
           tags: [href],
-          isMock: isMock,
+          isMock: options?.isMock,
           body: body,
-          headers: headers
+          headers: options?.headers,
+          noCache: options?.noCache,
+          noAuth: options?.noAuth
         });
       }
 
+      if (options?.noAuth) {
+        rootAxios[method.toLowerCase()](href, body, {
+          baseURL: options?.isMock
+            ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL
+            : undefined,
+          ...(options?.headers && { headers: options?.headers })
+        });
+      }
       return await axios[method.toLowerCase()](href, body, {
-        baseURL: isMock ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL : undefined,
-        ...(headers && { headers: headers })
+        baseURL: options?.isMock
+          ? process.env.NEXT_PUBLIC_NEXT_SERVER_URL
+          : undefined,
+        ...(options?.headers && { headers: options?.headers })
       });
 
     default:

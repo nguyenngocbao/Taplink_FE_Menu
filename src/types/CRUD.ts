@@ -1,20 +1,20 @@
 import { revalidateTag } from '@/app/actions';
 import { bindMethodsToSelf, callApi } from '@/utils/common';
 
-import { PaginationRes } from '.';
+import { PaginationRes, SearchParams } from '.';
 
 export interface useCRUDServiceProps<
   DTO extends { id?: ID },
-  Modal = unknown,
-  CreateReqPayload = DTO,
-  UpdateReqPayload = CreateReqPayload
+  Modal extends { id: ID },
+  CreateReqPayload = Modal & { id?: ID },
+  UpdateReqPayload = Modal & { id?: ID }
 > {
   service: CRUDAbstract<DTO, Modal, CreateReqPayload, UpdateReqPayload>;
 }
 
 export type ID = number | string;
 
-export interface CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload> {
+export interface CRUDInterface<DTO, Modal, CreateReqPayload, UpdateReqPayload> {
   prefix: string;
   isMock: boolean;
   create(
@@ -22,7 +22,9 @@ export interface CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload> {
     revalidate?: boolean,
     headers?: Record<string, string>
   ): Promise<DTO>;
-  list(params: Record<string, unknown>): Promise<PaginationRes<DTO>>;
+  list(
+    params: SearchParams<Modal, Record<string, unknown>>
+  ): Promise<PaginationRes<DTO>>;
   get(id: ID): Promise<DTO | null>;
   update(
     newItem: UpdateReqPayload,
@@ -35,44 +37,108 @@ export interface CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload> {
 
 export abstract class CRUDAbstract<
   DTO extends { id?: ID },
-  Modal,
-  CreateReqPayload = Modal,
-  UpdateReqPayload = CreateReqPayload
-> implements CRUDInterface<DTO, CreateReqPayload, UpdateReqPayload>
+  Modal extends { id: ID },
+  CreateReqPayload = Modal & { id?: ID },
+  UpdateReqPayload = Modal & { id?: ID }
+> implements CRUDInterface<DTO, Modal, CreateReqPayload, UpdateReqPayload>
 {
   prefix: string;
+  private revalidateTags: {
+    create: string[];
+    update: string[];
+    delete: string[];
+  };
   isMock: boolean;
+  isAutoNo: boolean;
 
-  constructor(prefix: string, isMock?: boolean) {
+  constructor(prefix: string, isMock?: boolean, isAutoNo?: boolean) {
     this.prefix = prefix;
     this.isMock = isMock;
+    this.isAutoNo = isAutoNo ?? true;
+    this.revalidateTags = {
+      create: [this.prefix],
+      update: [this.prefix],
+      delete: [this.prefix]
+    };
     bindMethodsToSelf(CRUDAbstract, this);
   }
 
-  abstract mapDTO(res: Modal): DTO;
+  addRevalidateTags(tags: string[], type?: 'create' | 'update' | 'delete') {
+    switch (type) {
+      case 'create':
+        this.revalidateTags.create.push(...tags);
+        break;
+      case 'update':
+        this.revalidateTags.update.push(...tags);
+        break;
+      case 'delete':
+        this.revalidateTags.delete.push(...tags);
+        break;
+      default:
+        this.revalidateTags.create.push(...tags);
+        this.revalidateTags.update.push(...tags);
+        this.revalidateTags.delete.push(...tags);
+        break;
+    }
+  }
+
+  removeRevalidateTags(tags: string[], type: 'create' | 'update' | 'delete') {
+    switch (type) {
+      case 'create':
+        this.revalidateTags.create = this.revalidateTags.create.filter(
+          t => !tags.includes(t)
+        );
+        break;
+      case 'update':
+        this.revalidateTags.update = this.revalidateTags.update.filter(
+          t => !tags.includes(t)
+        );
+        break;
+      case 'delete':
+        this.revalidateTags.delete = this.revalidateTags.delete.filter(
+          t => !tags.includes(t)
+        );
+        break;
+      default:
+        this.revalidateTags.create = this.revalidateTags.create.filter(
+          t => !tags.includes(t)
+        );
+        this.revalidateTags.update = this.revalidateTags.update.filter(
+          t => !tags.includes(t)
+        );
+        this.revalidateTags.delete = this.revalidateTags.delete.filter(
+          t => !tags.includes(t)
+        );
+        break;
+    }
+  }
+
+  abstract mapDTO(res: Modal): DTO | null;
 
   async create(
     item: CreateReqPayload,
     revalidate = true,
     headers?: Record<string, string>
   ): Promise<DTO> {
-    const res: Modal = await callApi(
-      this.prefix,
-      'POST',
-      item,
-      this.isMock,
+    const res: Modal = await callApi(this.prefix, 'POST', item, {
+      isMock: this.isMock,
       headers
-    );
-    revalidate && revalidateTag(this.prefix);
+    });
+    revalidate && this.revalidateTags.create.forEach(tag => revalidateTag(tag));
+
     return this.mapDTO(res);
   }
 
-  async list(params): Promise<PaginationRes<DTO>> {
+  async list(
+    params: SearchParams<Modal, Record<string, unknown>>
+  ): Promise<PaginationRes<DTO>> {
     const res = await callApi<PaginationRes<Modal>>(
       this.prefix,
       'GET',
       params,
-      this.isMock
+      {
+        isMock: this.isMock
+      }
     );
 
     if (res.content) {
@@ -84,17 +150,11 @@ export abstract class CRUDAbstract<
   }
 
   async get(id: ID): Promise<DTO | null> {
-    try {
-      const res: Modal = await callApi(
-        this.prefix + '/' + id,
-        'GET',
-        undefined,
-        this.isMock
-      );
-      return this.mapDTO(res);
-    } catch (e) {
-      console.log(e);
-    }
+    const res: Modal = await callApi(this.prefix + '/' + id, 'GET', undefined, {
+      isMock: this.isMock
+    });
+
+    return this.mapDTO(res);
   }
 
   async update(
@@ -103,14 +163,14 @@ export abstract class CRUDAbstract<
     revalidate = true,
     headers?: Record<string, string>
   ): Promise<DTO> {
-    const res: Modal = await callApi(
-      this.prefix + '/' + id,
-      'PUT',
-      newItem,
-      this.isMock,
+    const res: Modal = await callApi(this.prefix + '/' + id, 'PUT', newItem, {
+      isMock: this.isMock,
       headers
-    );
-    revalidate && revalidateTag(this.prefix);
+    });
+    if (revalidate) {
+      this.revalidateTags.update.forEach(tag => revalidateTag(tag));
+      revalidateTag(this.prefix + '/' + id);
+    }
     return this.mapDTO(res);
   }
 
@@ -119,9 +179,14 @@ export abstract class CRUDAbstract<
       this.prefix + '/' + id,
       'DELETE',
       undefined,
-      this.isMock
+      {
+        isMock: this.isMock
+      }
     );
-    revalidate && revalidateTag(this.prefix);
+    if (revalidate) {
+      this.revalidateTags.delete.forEach(tag => revalidateTag(tag));
+      revalidateTag(this.prefix + '/' + id);
+    }
     return res;
   }
 }

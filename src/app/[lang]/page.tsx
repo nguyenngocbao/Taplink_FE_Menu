@@ -4,6 +4,7 @@ import Link from 'next/link';
 import CheckListIcon from '@/assets/image/checklist.png';
 import PhoneChat from '@/assets/image/phone-chat.svg';
 import { STORE_OWNER_ROUTE } from '@/constants/routes';
+import { getServerSession } from '@/lib/auth';
 
 import { useTranslation } from '../i18n';
 
@@ -17,7 +18,12 @@ export const metadata = {
 export default async function Home({ params: { lang }, searchParams }) {
   const isOpenChoosingStore = !!searchParams?.['open_choosing_store'];
   const deviceId = searchParams?.['device_id'];
-  const { t } = await useTranslation(lang, ['welcome', 'common']);
+  const [{ t }, session] = await Promise.all([
+    useTranslation(lang, ['welcome', 'common']),
+    getServerSession()
+  ]);
+
+  const role = session?.user?.role;
 
   return (
     <>
@@ -35,29 +41,34 @@ export default async function Home({ params: { lang }, searchParams }) {
             {t('title')}
           </h1>
         </div>
-        <div>
-          <Link
-            href={{
-              pathname: STORE_OWNER_ROUTE.CREATE_STORE,
-              search: deviceId ? `device_id=${deviceId}` : ''
-            }}
-            className="mb-[16px] flex items-center gap-[17px] rounded-[10px] bg-primary-bg px-[20px] py-[17px]"
-          >
-            <Image
-              src={CheckListIcon}
-              alt="check-list"
-              className="h-[60px] w-[58px] object-contain"
-            />
-            <div>
-              <h2 className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
-                {t('createNewStore')}
-              </h2>
-              <p className="text-[16px]/[22.4px] font-normal text-black">
-                {t('createNewStoreDesc')}
-              </p>
-            </div>
-          </Link>
-          <ChooseExistedStore isInitialOpen={isOpenChoosingStore} />
+        <div className="w-full">
+          {role === 'store_owner' && (
+            <Link
+              href={{
+                pathname: STORE_OWNER_ROUTE.CREATE_STORE,
+                search: deviceId ? `device_id=${deviceId}` : ''
+              }}
+              className="mb-[16px] flex items-center gap-[17px] rounded-[10px] bg-primary-bg px-[20px] py-[17px]"
+            >
+              <Image
+                src={CheckListIcon}
+                alt="check-list"
+                className="h-[60px] w-[58px] object-contain"
+              />
+              <div>
+                <h2 className="mb-[4px] text-[20px]/[24px] font-bold text-primary">
+                  {t('createNewStore')}
+                </h2>
+                <p className="text-[16px]/[22.4px] font-normal text-black">
+                  {t('createNewStoreDesc')}
+                </p>
+              </div>
+            </Link>
+          )}
+          <ChooseExistedStore
+            isInitialOpen={isOpenChoosingStore}
+            initialSession={session}
+          />
         </div>
       </main>
     </>

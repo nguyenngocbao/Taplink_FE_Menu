@@ -18,7 +18,7 @@ export const StoreItem: FC<StoreItem> = ({ data, className, ...props }) => {
   return (
     <div
       className={mergeClasses(
-        'rounded-[10px] bg-primary-bg p-[10px] text-left',
+        'w-full rounded-[10px] bg-primary-bg p-[10px] text-left',
         className
       )}
       {...props}

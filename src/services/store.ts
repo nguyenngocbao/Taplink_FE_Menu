@@ -1,4 +1,4 @@
-import { Option, OptionRes } from '@/types';
+import { Option, OptionRes, PaginationRes, SearchParams } from '@/types';
 import { CRUDAbstract } from '@/types/CRUD';
 import { StoreDTO, StoreModal, StorePostReq, StorePutReq } from '@/types/store';
 import { bindMethodsToSelf, callApi } from '@/utils/common';
@@ -45,6 +45,26 @@ class StoreCRUD extends CRUDAbstract<
       label: type.name,
       value: type.id
     }));
+  }
+
+  async getStoresForAdmin(
+    params: SearchParams<StoreModal, { userId: number; searchKey?: string }>
+  ): Promise<PaginationRes<StoreDTO>> {
+    const res = await callApi<PaginationRes<StoreModal>>(
+      STORE_APIs.INDEX + '/all',
+      'GET',
+      params,
+      {
+        isMock: this.isMock
+      }
+    );
+
+    if (res.content) {
+      const dtos = res.content.map(this.mapDTO);
+      return { ...res, content: dtos };
+    }
+    const dtos: StoreDTO[] = res as any;
+    return { content: dtos };
   }
 }
 

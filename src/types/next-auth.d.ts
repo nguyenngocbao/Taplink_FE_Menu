@@ -20,6 +20,7 @@ declare module 'next-auth' {
     fullName: string;
     email: string;
     phone: string;
+    admin: boolean;
   }
 }
 

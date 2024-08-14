@@ -11,14 +11,9 @@ class FileService {
   }
 
   async deleteImage(body: ImageDeleteReq): Promise<any> {
-    return callApi(
-      `${CATEGORY_APIs.INDEX}`,
-      'DELETE',
-      body,
-      false,
-      undefined,
-      true
-    );
+    return callApi(`${CATEGORY_APIs.INDEX}`, 'DELETE', body, {
+      isUseBody: true
+    });
   }
 }
 

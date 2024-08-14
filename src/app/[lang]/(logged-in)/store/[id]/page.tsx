@@ -29,12 +29,16 @@ export default async function ({ params: { lang, id } }) {
     getCurrentUser(),
     itemService.getPriceTypes()
   ]);
-  const store = await storeService.get(id);
-  const categories = await categoryService.list({ storeId: id });
+  const [store, categories] = await Promise.all([
+    storeService.get(id),
+    categoryService.list({ storeId: id })
+  ]);
   const [{ t }, user, priceTypeRes] = await promises;
 
   const sortedCategories = categories.content.sort((a, b) => a.id - b.id);
   const isOwner = user && user?.id === store?.storeOwnerId;
+  const isAdmin = user?.role === 'admin';
+  const isEditable = isOwner || isAdmin;
 
   return (
     <main className="relative items-center p-[16px] text-center">
@@ -50,7 +54,7 @@ export default async function ({ params: { lang, id } }) {
       <>
         <div className="mb-[16px] flex items-center justify-between">
           <p className="text-white">{t('shopInfo')}</p>
-          {isOwner && (
+          {isEditable && (
             <Link href={`${STORE_OWNER_ROUTE.STORE}/${id}/edit`}>
               <Image src={PencilWhite} alt="" />
             </Link>
@@ -88,7 +92,7 @@ export default async function ({ params: { lang, id } }) {
           <span className="text-[20px]/[24px] font-bold text-[#000]">
             {t('category')}
           </span>
-          {isOwner && <CategoryAdd storeId={id} />}
+          {isEditable && <CategoryAdd storeId={id} />}
         </div>
         {store?.storeTypeId === StoreType.FoodAndDrink && (
           <BasicLayout
@@ -96,13 +100,13 @@ export default async function ({ params: { lang, id } }) {
             categories={sortedCategories ?? []}
             store={store}
             priceTypes={priceTypeRes}
-            isOwner={isOwner}
+            isOwner={isEditable}
           />
         )}
 
         {store.storeTypeId === StoreType.Spa && (
           <GroupLayout
-            isOwner={isOwner}
+            isOwner={isEditable}
             categories={sortedCategories ?? []}
             menuTemplates={MENU_TEMPLATES}
             store={store}
