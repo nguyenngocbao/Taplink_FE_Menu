@@ -1,0 +1,7 @@
+.git
+.husky
+.vscode
+node_modules
+.next
+npm-debug.log*
+yarn-error.log*
